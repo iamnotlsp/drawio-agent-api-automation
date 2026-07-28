@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 1352.28,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "type": "user",
+      "content": "OK",
+      "sessionId": "d4a4691f-3256-4ef9-bb18-487bbcc7bf8f",
+      "requestId": "pytest-recovery-913d4a2d9ce34285abfbcd437edd8091",
+      "durationMs": 1347,
+      "costCredits": 1,
+      "remainingCredits": 99
+    }
+  }
+}

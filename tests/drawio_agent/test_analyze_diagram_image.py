@@ -207,6 +207,105 @@ class TestAnalyzeDiagramImageApi:
                 account_result["data"]["totalUsedCredits"]
             )) == cost_credits
 
+    @pytest.mark.e2e
+    @pytest.mark.slow
+    @pytest.mark.regression
+    @allure.story("图片解析消费幂等")
+    @allure.title("相同 requestId 重试图片解析时不应重复扣减额度")
+    @allure.severity(allure.severity_level.BLOCKER)
+    def test_repeated_image_request_does_not_double_charge(
+            self,
+            api_client,
+            vision_drawio_agent_id,
+            request_id
+    ):
+        user_id = f"pytest-image-retry-{uuid4().hex[:8]}"
+
+        purchase_response = api_client.post(
+            "/api/v1/credit/purchase_credit_order",
+            json={
+                "userId": user_id,
+                "teamId": None,
+                "orderId": f"{uuid4().int % 10**12:012d}",
+                "outTradeNo": f"{uuid4().int % 10**12:012d}",
+                "goodsId": GROUP_BUY_GOODS_ID,
+                "goodsName": GROUP_BUY_GOODS_NAME,
+                "credits": GROUP_BUY_CREDITS,
+                "payPrice": 12.9,
+                "status": None,
+                "paidTime": datetime.now().isoformat(
+                    timespec="milliseconds"
+                )
+            }
+        )
+
+        assert purchase_response.status_code == 200
+        assert purchase_response.json()["code"] == "0000"
+
+        image_data_url = _build_simple_flowchart_data_url()
+        request_body = {
+            "agentId": vision_drawio_agent_id,
+            "userId": user_id,
+            "sessionId": None,
+            "requestId": request_id,
+            "message": "请简要描述图片中的流程关系",
+            "imageDataUrl": image_data_url
+        }
+
+        with allure.step("第一次提交图片解析请求"):
+            first_response = api_client.post(
+                "/api/v1/analyze_diagram_image",
+                json=request_body,
+                timeout=60
+            )
+
+            assert first_response.status_code == 200
+            first_result = first_response.json()
+            assert first_result["code"] == "0000"
+            assert first_result["data"]["requestId"] == request_id
+
+        with allure.step("使用相同 requestId 重试图片解析"):
+            retry_request_body = {
+                **request_body,
+                "sessionId": first_result["data"]["sessionId"]
+            }
+            second_response = api_client.post(
+                "/api/v1/analyze_diagram_image",
+                json=retry_request_body,
+                timeout=60
+            )
+
+            assert second_response.status_code == 200
+            second_result = second_response.json()
+            assert second_result["code"] == "0000"
+            assert second_result["data"]["requestId"] == request_id
+
+        with allure.step("验证相同 requestId 只产生一次额度消费"):
+            account_response = api_client.get(
+                f"/api/v1/credit/query_credit_account/{user_id}"
+            )
+
+            assert account_response.status_code == 200
+            account_result = account_response.json()
+            assert account_result["code"] == "0000"
+
+            first_cost = Decimal(str(
+                first_result["data"]["costCredits"]
+            ))
+            total_used = Decimal(str(
+                account_result["data"]["totalUsedCredits"]
+            ))
+            available = Decimal(str(
+                account_result["data"]["availableCredits"]
+            ))
+
+            assert first_cost >= Decimal("1")
+            assert total_used == first_cost
+            assert available == (
+                Decimal(str(GROUP_BUY_CREDITS))
+                - first_cost
+            )
+
     @pytest.mark.negative
     @pytest.mark.regression
     @pytest.mark.xfail(

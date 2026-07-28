@@ -1,4 +1,0 @@
-INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:8091/api/v1/create_session timeout=5s
-INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:8091/api/v1/create_session status=200 elapsed_ms=1.62 body={"code": "0000", "info": "成功", "data": {"sessionId": "11333fe0-844c-4378-901c-3c1356d06550"}}
-INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:8091/api/v1/chat timeout=10s
-INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:8091/api/v1/chat status=200 elapsed_ms=2.28 body={"code": "0002", "info": "额度不足，请购买额度后继续使用", "data": null}

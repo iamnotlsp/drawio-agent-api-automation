@@ -1,0 +1,9 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 11.61,
+  "body": {
+    "code": "0002",
+    "info": "outTradeNo already exists with different credit order",
+    "data": null
+  }
+}
