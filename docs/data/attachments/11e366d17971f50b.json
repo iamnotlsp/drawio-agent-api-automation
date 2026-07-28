@@ -1,0 +1,29 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 8.08,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "userId": "pytest-lock-2d809788",
+      "teamId": "09684518",
+      "orderId": "046757850007",
+      "activityId": 100124,
+      "goodsId": "9890002",
+      "outTradeNo": "096612307845",
+      "originalPrice": 12.9,
+      "deductionPrice": 10.0,
+      "payPrice": 2.9,
+      "tradeOrderStatus": 0,
+      "teamStatus": 0,
+      "targetCount": 3,
+      "completeCount": 0,
+      "lockCount": 1,
+      "validStartTime": "2026-07-28T11:06:22.000+00:00",
+      "validEndTime": "2027-07-10T16:26:22.000+00:00",
+      "paid": false,
+      "groupSuccess": false,
+      "quotaGrantable": false
+    }
+  }
+}
