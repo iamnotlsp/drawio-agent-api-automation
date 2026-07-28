@@ -32,6 +32,7 @@ Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地�
 - 相同 requestId 重复聊天时额度扣减幂等
 - sessionId 失效时自动重建会话并正常扣减额度
 - 跨用户复用 sessionId 时自动创建独立会话，避免接入他人上下文
+- 同一 sessionId 下的多轮对话上下文记忆
 - 流式聊天的无额度拦截与消费记账
 - 拼团成功额度发放
 - 普通购买额度与重复购买幂等
@@ -86,7 +87,7 @@ Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地�
 | BUG-007 | chat_stream 调用完成后未记录消费，用户额度不会减少 | `xfail(strict=True)` |
 | BUG-008 | 图片 Data URL 非法时返回 `0001/未知失败`，未返回明确的非法参数错误 | `xfail(strict=True)` |
 | BUG-009 | 图片解析 requestId 未绑定 userId，不同用户复用时第二个用户调用视觉模型但不扣额度 | `xfail(strict=True)` |
-| BUG-010 | 创建会话和聊天接口无身份认证，调用方可伪造 userId 消耗其他用户额度 | `xfail(strict=True)` |
+| LIMIT-001 | Demo 暂未接入身份认证，调用方可以直接传入 userId | 作为生产化改造项，不计为当前 Demo 阻断缺陷 |
 | OPT-001 | 并发重复通知被唯一索引挡住后，部分响应仍显示在 `grantedOutTradeNoList` | 保留数据层幂等断言并记录待优化 |
 | OPT-002 | 相同 requestId 的重复聊天不会重复扣额度，但仍会再次调用 AI 模型 | 额度幂等已验证，建议在模型调用前判断 requestId |
 | OPT-003 | 相同 requestId 的重复图片解析不会重复扣额度，但仍会再次调用视觉模型 | 额度幂等已验证，建议缓存首次结果或在模型调用前判断 requestId |
