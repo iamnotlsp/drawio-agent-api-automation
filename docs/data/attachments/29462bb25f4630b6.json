@@ -1,9 +1,0 @@
-{
-  "statusCode": 200,
-  "elapsedMilliseconds": 4.18,
-  "body": {
-    "code": "0002",
-    "info": "credits must be greater than zero",
-    "data": null
-  }
-}

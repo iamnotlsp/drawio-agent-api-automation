@@ -1,0 +1,14 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8091/api/v1/analyze_diagram_image",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "agentId": "300001",
+    "userId": "pytest-no-credit-3bc2ae4f",
+    "sessionId": null,
+    "requestId": "pytest-57287dc25db947558fd1f675b422c15d",
+    "message": "请分析这张流程图",
+    "imageDataUrl": "not-a-valid-image"
+  }
+}

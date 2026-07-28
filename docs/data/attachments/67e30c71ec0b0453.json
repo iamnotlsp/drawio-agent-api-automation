@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 2131.52,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "type": "user",
+      "content": "OK",
+      "sessionId": "38b86772-d5ac-4ed6-b316-846ac32aed3e",
+      "requestId": "pytest-chat-c427071934d44d76831813f2c348298c",
+      "durationMs": 2113,
+      "costCredits": 1,
+      "remainingCredits": 99
+    }
+  }
+}

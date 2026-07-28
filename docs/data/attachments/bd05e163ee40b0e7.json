@@ -1,0 +1,12 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8091/api/v1/credit/grant_group_buy_success",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "teamId": "97465080",
+    "outTradeNoList": [
+      "unknown-f7f33188b1a3425588d2c8487fef7d38"
+    ]
+  }
+}

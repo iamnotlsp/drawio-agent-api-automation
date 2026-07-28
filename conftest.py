@@ -97,6 +97,15 @@ def api_client(base_url):
 
 @pytest.fixture(scope="session")
 def drawio_agent_id(api_client):
+    return _query_agent_id(api_client, "drawIoAgent")
+
+
+@pytest.fixture(scope="session")
+def vision_drawio_agent_id(api_client):
+    return _query_agent_id(api_client, "visionDrawIoAgent")
+
+
+def _query_agent_id(api_client, agent_name):
     response = api_client.get(
         "/api/v1/query_ai_agent_config_list"
     )
@@ -106,16 +115,16 @@ def drawio_agent_id(api_client):
     result = response.json()
     assert result["code"] == "0000"
 
-    drawio_agent = None
+    matched_agent = None
 
     for agent in result["data"]:
-        if agent["agentName"] == "drawIoAgent":
-            drawio_agent = agent
+        if agent["agentName"] == agent_name:
+            matched_agent = agent
             break
 
-    assert drawio_agent is not None
+    assert matched_agent is not None
 
-    return drawio_agent["agentId"]
+    return matched_agent["agentId"]
 
 
 @pytest.fixture

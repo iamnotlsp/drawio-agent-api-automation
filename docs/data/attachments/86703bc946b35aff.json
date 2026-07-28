@@ -1,0 +1,29 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 10.4,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "userId": "pytest-team-fc8c037e",
+      "teamId": "55249797",
+      "orderId": "313573178373",
+      "activityId": 100124,
+      "goodsId": "9890002",
+      "outTradeNo": "301733557052",
+      "originalPrice": 12.9,
+      "deductionPrice": 10.0,
+      "payPrice": 2.9,
+      "tradeOrderStatus": 1,
+      "teamStatus": 1,
+      "targetCount": 3,
+      "completeCount": 3,
+      "lockCount": 3,
+      "validStartTime": "2026-07-28T11:45:27.000+00:00",
+      "validEndTime": "2027-07-10T17:05:27.000+00:00",
+      "paid": true,
+      "groupSuccess": true,
+      "quotaGrantable": true
+    }
+  }
+}
