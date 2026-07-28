@@ -262,3 +262,95 @@ class TestChatCreditFlow:
                     Decimal(str(GROUP_BUY_CREDITS))
                     - total_used_credits
                 )
+
+    @pytest.mark.e2e
+    @pytest.mark.slow
+    @pytest.mark.regression
+    @allure.story("会话失效恢复")
+    @allure.title("sessionId 不存在时自动重建会话并正常扣减额度")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_chat_recovers_from_unknown_session_id(
+            self,
+            api_client,
+            drawio_agent_id
+    ):
+        user_id = f"pytest-session-recovery-{uuid4().hex[:8]}"
+        unknown_session_id = str(uuid4())
+        request_id = f"pytest-recovery-{uuid4().hex}"
+
+        with allure.step("为测试用户购买额度"):
+            purchase_response = api_client.post(
+                "/api/v1/credit/purchase_credit_order",
+                json={
+                    "userId": user_id,
+                    "teamId": None,
+                    "orderId": f"{uuid4().int % 10**12:012d}",
+                    "outTradeNo": (
+                        f"{uuid4().int % 10**12:012d}"
+                    ),
+                    "goodsId": GROUP_BUY_GOODS_ID,
+                    "goodsName": GROUP_BUY_GOODS_NAME,
+                    "credits": GROUP_BUY_CREDITS,
+                    "payPrice": 12.9,
+                    "status": None,
+                    "paidTime": datetime.now().isoformat(
+                        timespec="milliseconds"
+                    )
+                }
+            )
+
+            assert purchase_response.status_code == 200
+            assert purchase_response.json()["code"] == "0000"
+
+        with allure.step("使用不存在的 sessionId 发起聊天"):
+            chat_response = api_client.post(
+                "/api/v1/chat",
+                json={
+                    "agentId": drawio_agent_id,
+                    "userId": user_id,
+                    "sessionId": unknown_session_id,
+                    "requestId": request_id,
+                    "message": "请只回复：OK"
+                },
+                timeout=60
+            )
+
+            assert chat_response.status_code == 200
+
+            chat_result = chat_response.json()
+            assert chat_result["code"] == "0000"
+            assert chat_result["data"] is not None
+            assert chat_result["data"]["requestId"] == request_id
+            assert chat_result["data"]["sessionId"]
+            assert (
+                chat_result["data"]["sessionId"]
+                != unknown_session_id
+            )
+
+            cost_credits = Decimal(str(
+                chat_result["data"]["costCredits"]
+            ))
+            remaining_credits = Decimal(str(
+                chat_result["data"]["remainingCredits"]
+            ))
+
+            assert cost_credits >= Decimal("1")
+            assert remaining_credits == (
+                Decimal(str(GROUP_BUY_CREDITS))
+                - cost_credits
+            )
+
+        with allure.step("验证恢复会话后的额度消费已持久化"):
+            account_response = api_client.get(
+                f"/api/v1/credit/query_credit_account/{user_id}"
+            )
+
+            assert account_response.status_code == 200
+            account_result = account_response.json()
+            assert account_result["code"] == "0000"
+            assert Decimal(str(
+                account_result["data"]["availableCredits"]
+            )) == remaining_credits
+            assert Decimal(str(
+                account_result["data"]["totalUsedCredits"]
+            )) == cost_credits

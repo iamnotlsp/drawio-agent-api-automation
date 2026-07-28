@@ -1,0 +1,48 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 68.11,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "activityId": 100124,
+      "goods": {
+        "goodsId": "9890002",
+        "originalPrice": 12.9,
+        "deductionPrice": 10.0,
+        "payPrice": 2.9
+      },
+      "teamList": [
+        {
+          "userId": "pytest-paid-cancel-905eaf90",
+          "teamId": "56537250",
+          "activityId": 100124,
+          "targetCount": 3,
+          "completeCount": 1,
+          "lockCount": 1,
+          "validStartTime": "2026-07-28T11:24:14.000+00:00",
+          "validEndTime": "2027-07-10T16:44:14.000+00:00",
+          "validTimeCountdown": "05:17:20",
+          "outTradeNo": null
+        },
+        {
+          "userId": "pytest-pay-0e8b3a09",
+          "teamId": "61427973",
+          "activityId": 100124,
+          "targetCount": 3,
+          "completeCount": 1,
+          "lockCount": 1,
+          "validStartTime": "2026-07-28T11:26:53.000+00:00",
+          "validEndTime": "2027-07-10T16:46:53.000+00:00",
+          "validTimeCountdown": "05:19:59",
+          "outTradeNo": null
+        }
+      ],
+      "teamStatistic": {
+        "allTeamCount": 61,
+        "allTeamCompleteCount": 38,
+        "allTeamUserCount": 137
+      }
+    }
+  }
+}
