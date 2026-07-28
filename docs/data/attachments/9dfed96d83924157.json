@@ -1,0 +1,14 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 8.64,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "userId": "pytest-paid-cancel-67c86d29",
+      "teamId": "27011772",
+      "activityId": 100124,
+      "outTradeNo": "304530630150"
+    }
+  }
+}

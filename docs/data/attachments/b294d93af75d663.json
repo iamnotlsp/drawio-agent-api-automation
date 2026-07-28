@@ -1,9 +1,0 @@
-{
-  "statusCode": 200,
-  "elapsedMilliseconds": 9.63,
-  "body": {
-    "code": "0000",
-    "info": "成功",
-    "data": true
-  }
-}

@@ -9,13 +9,13 @@
 
 | 指标 | 结果 |
 |---|---:|
-| 收集用例 | 31 |
+| 收集用例 | 33 |
 | 通过 | 23 |
-| 已知缺陷（xfail） | 8 |
+| 已知缺陷（xfail） | 10 |
 | 非预期失败 | 0 |
-| Allure 请求/响应及日志附件 | 297 |
+| Allure 请求/响应及日志附件 | 311 |
 
-> 8 个 xfail 来自 5 个已确认缺陷，其中“无效智能体 ID”使用了 2 组参数化数据，“聊天必填参数校验”使用了 3 组参数化数据。
+> 10 个 xfail 来自 7 个已确认缺陷，其中“无效智能体 ID”使用了 2 组参数化数据，“聊天必填参数校验”使用了 3 组参数化数据。
 
 Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地址访问。
 本地报告入口为 `docs/index.html`。
@@ -31,6 +31,7 @@ Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地�
 - 购买额度后发起 AI 对话并校验消费额度
 - 相同 requestId 重复聊天时额度扣减幂等
 - sessionId 失效时自动重建会话并正常扣减额度
+- 流式聊天的无额度拦截与消费记账
 - 拼团成功额度发放
 - 普通购买额度与重复购买幂等
 - 同一订单号的用户、额度冲突校验
@@ -80,6 +81,8 @@ Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地�
 | BUG-003 | 普通购买传入负支付金额时仍创建订单并发放额度 | `xfail(strict=True)` |
 | BUG-004 | requestId 未绑定 userId，不同用户复用相同 requestId 时第二个用户调用模型但不扣额度 | `xfail(strict=True)` |
 | BUG-005 | 聊天缺少必填参数时未返回参数错误，而是被“额度不足”响应掩盖 | `xfail(strict=True)` 参数化覆盖 3 个字段 |
+| BUG-006 | chat_stream 未校验可用额度，无额度用户仍可调用 AI | `xfail(strict=True)` |
+| BUG-007 | chat_stream 调用完成后未记录消费，用户额度不会减少 | `xfail(strict=True)` |
 | OPT-001 | 并发重复通知被唯一索引挡住后，部分响应仍显示在 `grantedOutTradeNoList` | 保留数据层幂等断言并记录待优化 |
 | OPT-002 | 相同 requestId 的重复聊天不会重复扣额度，但仍会再次调用 AI 模型 | 额度幂等已验证，建议在模型调用前判断 requestId |
 

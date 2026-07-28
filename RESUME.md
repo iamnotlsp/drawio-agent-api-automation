@@ -20,7 +20,7 @@ ThreadPoolExecutor
 
 - 基于 pytest fixture 封装多服务 API Client、环境参数和动态测试数据，
   支持通过命令行切换 DrawIOAgent 与拼团服务地址。
-- 设计并实现 31 个接口自动化用例，覆盖正常流程、异常校验、参数化、
+- 设计并实现 33 个接口自动化用例，覆盖正常流程、异常校验、参数化、
   顺序幂等、并发幂等以及三人拼团购买额度的跨系统 E2E 链路。
 - 覆盖“购买额度—创建会话—AI 对话—额度扣减”端到端链路，
   验证相同 requestId 重复请求时消费额度不被重复扣减，并验证失效
@@ -32,9 +32,10 @@ ThreadPoolExecutor
 - 使用 xfail(strict=True) 管理已知缺陷，发现并记录无效 agentId
   错误码不符合约定、成团通知 teamId 与订单不一致仍发放额度、
   负支付金额仍可购买额度、跨用户复用 requestId 可逃避扣费、
-  聊天必填参数错误被额度校验掩盖等问题。
+  聊天必填参数错误被额度校验掩盖、流式聊天绕过额度校验且不记账
+  等问题。
 - 接入 Allure 的 Epic、Feature、Story、Severity 和 HTTP 请求/响应附件，
-  最近一次全量回归结果为 23 passed、8 xfailed、0 unexpected failures。
+  最近一次全量回归结果为 23 passed、10 xfailed、0 unexpected failures。
 - 编写 PowerShell 一键回归脚本，并通过 GitHub Actions 将静态 Allure
   报告发布至 GitHub Pages。
 
