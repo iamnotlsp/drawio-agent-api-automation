@@ -1,0 +1,9 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 3.86,
+  "body": {
+    "code": "E0104",
+    "info": "不存在的外部交易单号或用户已退单",
+    "data": null
+  }
+}

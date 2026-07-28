@@ -1,0 +1,20 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 4.15,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": [
+      {
+        "agentId": "300001",
+        "agentName": "visionDrawIoAgent",
+        "agentDesc": "Image diagram recognition agent for Draw.io generation"
+      },
+      {
+        "agentId": "300000",
+        "agentName": "drawIoAgent",
+        "agentDesc": "Draw.io diagram assistant"
+      }
+    ]
+  }
+}
