@@ -33,7 +33,8 @@ ThreadPoolExecutor
   错误码不符合约定、成团通知 teamId 与订单不一致仍发放额度、
   负支付金额仍可购买额度、跨用户复用 requestId 可逃避扣费、
   聊天必填参数错误被额度校验掩盖、流式聊天绕过额度校验且不记账、
-  非法图片请求仅返回未知失败等问题。
+  非法图片请求仅返回未知失败、图片 requestId 跨用户复用可逃避扣费
+  等问题。
 - 接入 Allure 的 Epic、Feature、Story、Severity 和 HTTP 请求/响应附件，
   最近一次全量回归结果为 26 passed、11 xfailed、0 unexpected failures。
 - 编写 PowerShell 一键回归脚本，并通过 GitHub Actions 将静态 Allure

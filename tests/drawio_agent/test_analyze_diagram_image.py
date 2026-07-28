@@ -306,6 +306,105 @@ class TestAnalyzeDiagramImageApi:
                 - first_cost
             )
 
+    @pytest.mark.e2e
+    @pytest.mark.slow
+    @pytest.mark.regression
+    @pytest.mark.xfail(
+        strict=True,
+        reason=(
+            "已知缺陷：图片解析的 requestId 未绑定 userId，"
+            "不同用户复用时第二个用户调用视觉模型但不扣额度"
+        )
+    )
+    @allure.story("图片解析消费隔离")
+    @allure.title("不同用户复用相同 requestId 时应分别扣减各自额度")
+    @allure.severity(allure.severity_level.BLOCKER)
+    def test_image_request_id_is_isolated_between_users(
+            self,
+            api_client,
+            vision_drawio_agent_id,
+            request_id
+    ):
+        users = [
+            f"pytest-image-owner-{uuid4().hex[:8]}",
+            f"pytest-image-other-{uuid4().hex[:8]}"
+        ]
+
+        for user_id in users:
+            with allure.step(f"为用户 {user_id} 购买额度"):
+                purchase_response = api_client.post(
+                    "/api/v1/credit/purchase_credit_order",
+                    json={
+                        "userId": user_id,
+                        "teamId": None,
+                        "orderId": (
+                            f"{uuid4().int % 10**12:012d}"
+                        ),
+                        "outTradeNo": (
+                            f"{uuid4().int % 10**12:012d}"
+                        ),
+                        "goodsId": GROUP_BUY_GOODS_ID,
+                        "goodsName": GROUP_BUY_GOODS_NAME,
+                        "credits": GROUP_BUY_CREDITS,
+                        "payPrice": 12.9,
+                        "status": None,
+                        "paidTime": datetime.now().isoformat(
+                            timespec="milliseconds"
+                        )
+                    }
+                )
+
+                assert purchase_response.status_code == 200
+                assert purchase_response.json()["code"] == "0000"
+
+        image_data_url = _build_simple_flowchart_data_url()
+
+        for user_id in users:
+            with allure.step(
+                f"用户 {user_id} 使用共享 requestId 解析图片"
+            ):
+                response = api_client.post(
+                    "/api/v1/analyze_diagram_image",
+                    json={
+                        "agentId": vision_drawio_agent_id,
+                        "userId": user_id,
+                        "sessionId": None,
+                        "requestId": request_id,
+                        "message": "请简要描述图片中的流程关系",
+                        "imageDataUrl": image_data_url
+                    },
+                    timeout=60
+                )
+
+                assert response.status_code == 200
+                result = response.json()
+                assert result["code"] == "0000"
+                assert result["data"]["content"]
+                assert result["data"]["requestId"] == request_id
+
+        for user_id in users:
+            with allure.step(f"验证用户 {user_id} 被独立扣费"):
+                account_response = api_client.get(
+                    f"/api/v1/credit/query_credit_account/{user_id}"
+                )
+
+                assert account_response.status_code == 200
+                account_result = account_response.json()
+                assert account_result["code"] == "0000"
+
+                total_used = Decimal(str(
+                    account_result["data"]["totalUsedCredits"]
+                ))
+                available = Decimal(str(
+                    account_result["data"]["availableCredits"]
+                ))
+
+                assert total_used >= Decimal("1")
+                assert available == (
+                    Decimal(str(GROUP_BUY_CREDITS))
+                    - total_used
+                )
+
     @pytest.mark.negative
     @pytest.mark.regression
     @pytest.mark.xfail(
