@@ -1,0 +1,17 @@
+DEFAULT_USER_ID = "pytest-user-001"
+
+INVALID_AGENT_IDS = (
+    "999999",
+    "not-exist"
+)
+
+NO_CREDIT_USER_PREFIX = "pytest-no-credit"
+
+DEFAULT_CHAT_MESSAGE = "请帮我画一个简单的登录流程图"
+
+GROUP_BUY_SOURCE = "s01"
+GROUP_BUY_CHANNEL = "c01"
+GROUP_BUY_GOODS_ID = "9890002"
+GROUP_BUY_ACTIVITY_ID = 100124
+GROUP_BUY_GOODS_NAME = "Draw.io Agent 对话额度包 - 套餐1 100点"
+GROUP_BUY_CREDITS = 100

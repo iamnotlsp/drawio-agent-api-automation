@@ -1,0 +1,9 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 3.45,
+  "body": {
+    "code": "0002",
+    "info": "额度不足，请购买额度后继续使用",
+    "data": null
+  }
+}
