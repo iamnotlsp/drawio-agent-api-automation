@@ -1,0 +1,12 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8092/api/v1/gbm/index/query_group_buy_market_config",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "userId": "pytest-paid-cancel-a752a8ce",
+    "source": "s01",
+    "channel": "c01",
+    "goodsId": "9890002"
+  }
+}

@@ -1,2 +1,0 @@
-INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:8091/api/v1/create_session timeout=5s
-INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:8091/api/v1/create_session status=200 elapsed_ms=3.09 body={"code": "0000", "info": "成功", "data": {"sessionId": "349235fd-913c-4699-8699-cd84fc0b2468"}}

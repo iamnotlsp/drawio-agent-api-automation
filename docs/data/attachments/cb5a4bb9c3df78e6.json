@@ -1,0 +1,18 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8091/api/v1/credit/purchase_credit_order",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "userId": "pytest-direct-conflict-0c3e508a",
+    "teamId": null,
+    "orderId": "061101422105",
+    "outTradeNo": "632404686266",
+    "goodsId": "9890002",
+    "goodsName": "Draw.io Agent 对话额度包 - 套餐1 100点",
+    "credits": 100,
+    "payPrice": 12.9,
+    "status": null,
+    "paidTime": "2026-07-28T19:13:16.536"
+  }
+}

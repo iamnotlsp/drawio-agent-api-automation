@@ -1,0 +1,2 @@
+INFO     api_client:api_client.py:94 HTTP request method=GET url=http://127.0.0.1:8091/api/v1/query_ai_agent_config_list timeout=5s
+INFO     api_client:api_client.py:141 HTTP response method=GET url=http://127.0.0.1:8091/api/v1/query_ai_agent_config_list status=200 elapsed_ms=4.61 body={"code": "0000", "info": "成功", "data": [{"agentId": "300001", "agentName": "visionDrawIoAgent", "agentDesc": "Image diagram recognition agent for Draw.io generation"}, {"agentId": "300000", "agentName": "drawIoAgent", "agentDesc": "Draw.io diagram assistant"}]}
