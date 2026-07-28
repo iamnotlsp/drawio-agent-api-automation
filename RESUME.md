@@ -24,7 +24,8 @@ ThreadPoolExecutor
   顺序幂等、并发幂等以及三人拼团购买额度的跨系统 E2E 链路。
 - 覆盖“购买额度—创建会话—AI 对话/图片解析—额度扣减”端到端链路，
   验证相同 requestId 重复请求时消费额度不被重复扣减，并验证失效
-  sessionId 自动恢复后仍能正确完成对话与额度消费。
+  sessionId 自动恢复、跨用户 sessionId 隔离后仍能正确完成对话与
+  额度消费。
 - 使用 JSON Schema 校验接口响应契约，使用 Decimal 校验金额关系，
   通过轮询与超时机制验证异步成团回调后的额度到账结果。
 - 使用 ThreadPoolExecutor 与 Barrier 模拟 5 个并发重复通知，

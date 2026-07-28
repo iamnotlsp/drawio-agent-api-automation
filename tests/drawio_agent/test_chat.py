@@ -1,7 +1,16 @@
+from datetime import datetime
+from decimal import Decimal
+from uuid import uuid4
+
 import allure
 import pytest
 
-from testdata import DEFAULT_CHAT_MESSAGE
+from testdata import (
+    DEFAULT_CHAT_MESSAGE,
+    GROUP_BUY_CREDITS,
+    GROUP_BUY_GOODS_ID,
+    GROUP_BUY_GOODS_NAME,
+)
 
 
 @allure.epic("DrawIOAgent 接口自动化")
@@ -92,3 +101,96 @@ class TestChatApi:
         assert result["code"] == "0002"
         assert result["data"] is None
         assert result["info"] != "额度不足，请购买额度后继续使用"
+
+    @pytest.mark.e2e
+    @pytest.mark.slow
+    @pytest.mark.regression
+    @allure.story("会话用户隔离")
+    @allure.title("其他用户使用已有 sessionId 时不得接入原会话")
+    @allure.severity(allure.severity_level.BLOCKER)
+    def test_chat_session_is_isolated_between_users(
+            self,
+            api_client,
+            drawio_agent_id,
+            request_id
+    ):
+        owner_user_id = f"pytest-session-owner-{uuid4().hex[:8]}"
+        other_user_id = f"pytest-session-other-{uuid4().hex[:8]}"
+
+        with allure.step("用户 A 创建会话"):
+            session_response = api_client.post(
+                "/api/v1/create_session",
+                json={
+                    "agentId": drawio_agent_id,
+                    "userId": owner_user_id
+                }
+            )
+
+            assert session_response.status_code == 200
+            session_result = session_response.json()
+            assert session_result["code"] == "0000"
+            owner_session_id = session_result["data"]["sessionId"]
+
+        with allure.step("为用户 B 购买额度"):
+            purchase_response = api_client.post(
+                "/api/v1/credit/purchase_credit_order",
+                json={
+                    "userId": other_user_id,
+                    "teamId": None,
+                    "orderId": f"{uuid4().int % 10**12:012d}",
+                    "outTradeNo": (
+                        f"{uuid4().int % 10**12:012d}"
+                    ),
+                    "goodsId": GROUP_BUY_GOODS_ID,
+                    "goodsName": GROUP_BUY_GOODS_NAME,
+                    "credits": GROUP_BUY_CREDITS,
+                    "payPrice": 12.9,
+                    "status": None,
+                    "paidTime": datetime.now().isoformat(
+                        timespec="milliseconds"
+                    )
+                }
+            )
+
+            assert purchase_response.status_code == 200
+            assert purchase_response.json()["code"] == "0000"
+
+        with allure.step("用户 B 携带用户 A 的 sessionId 发起聊天"):
+            chat_response = api_client.post(
+                "/api/v1/chat",
+                json={
+                    "agentId": drawio_agent_id,
+                    "userId": other_user_id,
+                    "sessionId": owner_session_id,
+                    "requestId": request_id,
+                    "message": "请只回复：OK"
+                },
+                timeout=60
+            )
+
+            assert chat_response.status_code == 200
+            chat_result = chat_response.json()
+            assert chat_result["code"] == "0000"
+            assert chat_result["data"] is not None
+
+            other_session_id = chat_result["data"]["sessionId"]
+            cost_credits = Decimal(str(
+                chat_result["data"]["costCredits"]
+            ))
+
+            assert other_session_id
+            assert other_session_id != owner_session_id
+            assert cost_credits >= Decimal("1")
+
+        with allure.step("验证消费记录属于用户 B"):
+            account_response = api_client.get(
+                f"/api/v1/credit/query_credit_account/"
+                f"{other_user_id}"
+            )
+
+            assert account_response.status_code == 200
+            account_result = account_response.json()
+            assert account_result["code"] == "0000"
+            assert Decimal(str(
+                account_result["data"]["totalUsedCredits"]
+            )) == cost_credits
