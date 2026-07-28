@@ -9,13 +9,13 @@
 
 | 指标 | 结果 |
 |---|---:|
-| 收集用例 | 26 |
+| 收集用例 | 27 |
 | 通过 | 22 |
-| 已知缺陷（xfail） | 4 |
+| 已知缺陷（xfail） | 5 |
 | 非预期失败 | 0 |
-| Allure 请求/响应及日志附件 | 258 |
+| Allure 请求/响应及日志附件 | 275 |
 
-> 4 个 xfail 来自 3 个已确认缺陷，其中“无效智能体 ID”使用了 2 组参数化数据。
+> 5 个 xfail 来自 4 个已确认缺陷，其中“无效智能体 ID”使用了 2 组参数化数据。
 
 Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地址访问。
 本地报告入口为 `docs/index.html`。
@@ -76,6 +76,7 @@ Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地�
 | BUG-001 | 无效 agentId 返回 `0001/未知失败`，未返回约定的 `E0001` | `xfail(strict=True)` |
 | BUG-002 | 成团通知的 teamId 与额度订单不一致时仍然发放额度 | `xfail(strict=True)` |
 | BUG-003 | 普通购买传入负支付金额时仍创建订单并发放额度 | `xfail(strict=True)` |
+| BUG-004 | requestId 未绑定 userId，不同用户复用相同 requestId 时第二个用户调用模型但不扣额度 | `xfail(strict=True)` |
 | OPT-001 | 并发重复通知被唯一索引挡住后，部分响应仍显示在 `grantedOutTradeNoList` | 保留数据层幂等断言并记录待优化 |
 | OPT-002 | 相同 requestId 的重复聊天不会重复扣额度，但仍会再次调用 AI 模型 | 额度幂等已验证，建议在模型调用前判断 requestId |
 

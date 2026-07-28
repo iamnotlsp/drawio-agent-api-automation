@@ -1,0 +1,16 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 22.03,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "teamId": "19896206",
+      "grantedOutTradeNoList": [
+        "869172158719"
+      ],
+      "skippedOutTradeNoList": [],
+      "failedOutTradeNoList": []
+    }
+  }
+}
