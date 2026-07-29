@@ -118,6 +118,38 @@ class TestMarketOrderApi:
         assert result["info"] == "非法参数"
         assert result["data"] is None
 
+    @pytest.mark.negative
+    @pytest.mark.regression
+    @allure.story("订单锁定通知配置")
+    @allure.title("HTTP 通知缺少回调地址时应返回非法参数")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_lock_market_pay_order_http_notify_without_url(
+            self,
+            group_buy_api_client
+    ):
+        response = group_buy_api_client.post(
+            "/api/v1/gbm/trade/lock_market_pay_order",
+            json={
+                "userId": f"pytest-lock-{uuid4().hex[:8]}",
+                "teamId": None,
+                "activityId": GROUP_BUY_ACTIVITY_ID,
+                "goodsId": GROUP_BUY_GOODS_ID,
+                "source": GROUP_BUY_SOURCE,
+                "channel": GROUP_BUY_CHANNEL,
+                "outTradeNo": f"{uuid4().int % 10**12:012d}",
+                "notifyConfigVO": {
+                    "notifyType": "HTTP"
+                }
+            }
+        )
+
+        assert response.status_code == 200
+
+        result = response.json()
+        assert result["code"] == "0002"
+        assert result["info"] == "非法参数"
+        assert result["data"] is None
+
     @pytest.mark.regression
     @allure.story("订单锁定")
     @allure.title("成功锁定并查询拼团订单")
