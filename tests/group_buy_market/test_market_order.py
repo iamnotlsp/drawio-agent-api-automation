@@ -297,6 +297,112 @@ class TestMarketOrderApi:
                 assert cancel_result["data"]["canceled"] is True
 
     @pytest.mark.regression
+    @allure.story("订单锁定幂等")
+    @allure.title("相同外部交易号重复锁单应返回同一订单")
+    @allure.severity(allure.severity_level.BLOCKER)
+    def test_duplicate_lock_returns_same_order_without_reoccupying_team(
+            self,
+            group_buy_api_client
+    ):
+        user_id = f"pytest-lock-idempotent-{uuid4().hex[:8]}"
+        out_trade_no = f"{uuid4().int % 10**12:012d}"
+        request_body = {
+            "userId": user_id,
+            "teamId": None,
+            "activityId": GROUP_BUY_ACTIVITY_ID,
+            "goodsId": GROUP_BUY_GOODS_ID,
+            "source": GROUP_BUY_SOURCE,
+            "channel": GROUP_BUY_CHANNEL,
+            "outTradeNo": out_trade_no,
+            "notifyConfigVO": {
+                "notifyType": "MQ"
+            }
+        }
+        lock_created = False
+
+        try:
+            first_response = group_buy_api_client.post(
+                "/api/v1/gbm/trade/lock_market_pay_order",
+                json=request_body
+            )
+
+            assert first_response.status_code == 200
+
+            first_result = first_response.json()
+            assert first_result["code"] == "0000"
+            assert first_result["data"] is not None
+            lock_created = True
+
+            first_order = first_result["data"]
+
+            first_query_response = group_buy_api_client.post(
+                "/api/v1/gbm/trade/query_market_pay_order",
+                json={
+                    "userId": user_id,
+                    "outTradeNo": out_trade_no
+                }
+            )
+
+            assert first_query_response.status_code == 200
+
+            first_query_result = first_query_response.json()
+            assert first_query_result["code"] == "0000"
+            first_lock_count = first_query_result[
+                "data"
+            ]["lockCount"]
+
+            second_response = group_buy_api_client.post(
+                "/api/v1/gbm/trade/lock_market_pay_order",
+                json=request_body
+            )
+
+            assert second_response.status_code == 200
+
+            second_result = second_response.json()
+            assert second_result["code"] == "0000"
+            assert second_result["data"] is not None
+
+            second_order = second_result["data"]
+            assert second_order["orderId"] == first_order["orderId"]
+            assert second_order["tradeOrderStatus"] == (
+                first_order["tradeOrderStatus"]
+            )
+            assert second_order["payPrice"] == first_order["payPrice"]
+
+            final_query_response = group_buy_api_client.post(
+                "/api/v1/gbm/trade/query_market_pay_order",
+                json={
+                    "userId": user_id,
+                    "outTradeNo": out_trade_no
+                }
+            )
+
+            assert final_query_response.status_code == 200
+
+            final_query_result = final_query_response.json()
+            assert final_query_result["code"] == "0000"
+            assert final_query_result["data"]["orderId"] == (
+                first_order["orderId"]
+            )
+            assert final_query_result["data"]["lockCount"] == (
+                first_lock_count
+            )
+        finally:
+            if lock_created:
+                cancel_response = group_buy_api_client.post(
+                    "/api/v1/gbm/trade/cancel_market_pay_order",
+                    json={
+                        "userId": user_id,
+                        "source": GROUP_BUY_SOURCE,
+                        "channel": GROUP_BUY_CHANNEL,
+                        "outTradeNo": out_trade_no
+                    }
+                )
+
+                assert cancel_response.status_code == 200
+                assert cancel_response.json()["code"] == "0000"
+
+    @pytest.mark.regression
     @allure.story("订单结算")
     @allure.title("成功结算拼团订单并更新支付状态")
     @allure.severity(allure.severity_level.CRITICAL)
