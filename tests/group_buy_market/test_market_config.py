@@ -153,3 +153,56 @@ class TestMarketConfigApi:
         assert result["code"] == "E0002"
         assert result["info"] == "无拼团营销配置"
         assert result["data"] is None
+
+    @pytest.mark.negative
+    @pytest.mark.regression
+    @pytest.mark.parametrize(
+        ("field", "invalid_value"),
+        [
+            pytest.param(
+                "source",
+                "source-not-exist",
+                id="unknown-source"
+            ),
+            pytest.param(
+                "channel",
+                "channel-not-exist",
+                id="unknown-channel"
+            ),
+        ]
+    )
+    @pytest.mark.xfail(
+        strict=True,
+        reason=(
+            "已知缺陷：无拼团营销配置的 E0002 被控制器统一转换为"
+            " 0001/未知失败"
+        )
+    )
+    @allure.story("活动查询业务校验")
+    @allure.title("来源或渠道没有配置活动时应返回无拼团营销配置")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_query_market_config_with_unknown_source_or_channel(
+            self,
+            group_buy_api_client,
+            field,
+            invalid_value
+    ):
+        request_body = {
+            "userId": f"pytest-market-{uuid4().hex[:8]}",
+            "source": GROUP_BUY_SOURCE,
+            "channel": GROUP_BUY_CHANNEL,
+            "goodsId": GROUP_BUY_GOODS_ID
+        }
+        request_body[field] = invalid_value
+
+        response = group_buy_api_client.post(
+            "/api/v1/gbm/index/query_group_buy_market_config",
+            json=request_body
+        )
+
+        assert response.status_code == 200
+
+        result = response.json()
+        assert result["code"] == "E0002"
+        assert result["info"] == "无拼团营销配置"
+        assert result["data"] is None
