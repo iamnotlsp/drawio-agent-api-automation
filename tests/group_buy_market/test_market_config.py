@@ -61,3 +61,62 @@ class TestMarketConfigApi:
         assert pay_price == original_price - deduction_price
         assert pay_price < original_price
         assert isinstance(data["teamList"], list)
+
+        statistic = data["teamStatistic"]
+        assert statistic is not None
+        assert statistic["allTeamCount"] >= 0
+        assert statistic["allTeamCompleteCount"] >= 0
+        assert statistic["allTeamUserCount"] >= 0
+        assert (
+            statistic["allTeamCompleteCount"]
+            <= statistic["allTeamCount"]
+        )
+
+        for team in data["teamList"]:
+            assert team["teamId"]
+            assert team["activityId"] == data["activityId"]
+            assert team["targetCount"] > 0
+            assert 0 <= team["completeCount"] <= team["targetCount"]
+            assert 0 <= team["lockCount"] <= team["targetCount"]
+            assert team["validStartTime"]
+            assert team["validEndTime"]
+            assert team["validTimeCountdown"]
+
+    @pytest.mark.negative
+    @pytest.mark.regression
+    @pytest.mark.parametrize(
+        "missing_field",
+        [
+            pytest.param("userId", id="missing-user-id"),
+            pytest.param("source", id="missing-source"),
+            pytest.param("channel", id="missing-channel"),
+            pytest.param("goodsId", id="missing-goods-id"),
+        ]
+    )
+    @allure.story("活动查询参数校验")
+    @allure.title("缺少活动查询必填字段时应返回非法参数")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_query_market_config_missing_required_field(
+            self,
+            group_buy_api_client,
+            missing_field
+    ):
+        request_body = {
+            "userId": f"pytest-market-{uuid4().hex[:8]}",
+            "source": GROUP_BUY_SOURCE,
+            "channel": GROUP_BUY_CHANNEL,
+            "goodsId": GROUP_BUY_GOODS_ID
+        }
+        request_body.pop(missing_field)
+
+        response = group_buy_api_client.post(
+            "/api/v1/gbm/index/query_group_buy_market_config",
+            json=request_body
+        )
+
+        assert response.status_code == 200
+
+        result = response.json()
+        assert result["code"] == "0002"
+        assert result["info"] == "非法参数"
+        assert result["data"] is None
