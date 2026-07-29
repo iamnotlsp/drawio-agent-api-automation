@@ -302,6 +302,136 @@ class TestMarketOrderApi:
                 assert cancel_response.status_code == 200
                 assert cancel_response.json()["code"] == "0000"
 
+    @pytest.mark.negative
+    @pytest.mark.regression
+    @pytest.mark.xfail(
+        strict=True,
+        reason=(
+            "已知缺陷：加入已有队伍时未校验 teamId 所属活动，"
+            "同一队伍可混入其他活动和商品订单"
+        )
+    )
+    @allure.story("订单锁定队伍校验")
+    @allure.title("使用其他活动的队伍编号锁单时应被拒绝")
+    @allure.severity(allure.severity_level.BLOCKER)
+    def test_lock_market_pay_order_with_team_from_other_activity(
+            self,
+            group_buy_api_client
+    ):
+        owner_user_id = f"pytest-team-owner-{uuid4().hex[:8]}"
+        join_user_id = f"pytest-team-join-{uuid4().hex[:8]}"
+        owner_out_trade_no = f"{uuid4().int % 10**12:012d}"
+        join_out_trade_no = f"{uuid4().int % 10**12:012d}"
+        owner_lock_created = False
+        join_lock_created = False
+
+        other_config_response = group_buy_api_client.post(
+            "/api/v1/gbm/index/query_group_buy_market_config",
+            json={
+                "userId": join_user_id,
+                "source": GROUP_BUY_SOURCE,
+                "channel": GROUP_BUY_CHANNEL,
+                "goodsId": "9890003"
+            }
+        )
+
+        assert other_config_response.status_code == 200
+
+        other_config_result = other_config_response.json()
+        assert other_config_result["code"] == "0000"
+        other_activity_id = other_config_result["data"]["activityId"]
+
+        try:
+            owner_lock_response = group_buy_api_client.post(
+                "/api/v1/gbm/trade/lock_market_pay_order",
+                json={
+                    "userId": owner_user_id,
+                    "teamId": None,
+                    "activityId": GROUP_BUY_ACTIVITY_ID,
+                    "goodsId": GROUP_BUY_GOODS_ID,
+                    "source": GROUP_BUY_SOURCE,
+                    "channel": GROUP_BUY_CHANNEL,
+                    "outTradeNo": owner_out_trade_no,
+                    "notifyConfigVO": {
+                        "notifyType": "MQ"
+                    }
+                }
+            )
+
+            assert owner_lock_response.status_code == 200
+            assert owner_lock_response.json()["code"] == "0000"
+            owner_lock_created = True
+
+            owner_query_response = group_buy_api_client.post(
+                "/api/v1/gbm/trade/query_market_pay_order",
+                json={
+                    "userId": owner_user_id,
+                    "outTradeNo": owner_out_trade_no
+                }
+            )
+
+            assert owner_query_response.status_code == 200
+
+            owner_query_result = owner_query_response.json()
+            assert owner_query_result["code"] == "0000"
+            team_id = owner_query_result["data"]["teamId"]
+
+            join_response = group_buy_api_client.post(
+                "/api/v1/gbm/trade/lock_market_pay_order",
+                json={
+                    "userId": join_user_id,
+                    "teamId": team_id,
+                    "activityId": other_activity_id,
+                    "goodsId": "9890003",
+                    "source": GROUP_BUY_SOURCE,
+                    "channel": GROUP_BUY_CHANNEL,
+                    "outTradeNo": join_out_trade_no,
+                    "notifyConfigVO": {
+                        "notifyType": "MQ"
+                    }
+                }
+            )
+
+            assert join_response.status_code == 200
+
+            join_result = join_response.json()
+            join_lock_created = (
+                join_result.get("code") == "0000"
+                and join_result.get("data") is not None
+            )
+
+            assert join_result["code"] == "0002"
+            assert join_result["info"] == "非法参数"
+            assert join_result["data"] is None
+        finally:
+            if join_lock_created:
+                join_cancel_response = group_buy_api_client.post(
+                    "/api/v1/gbm/trade/cancel_market_pay_order",
+                    json={
+                        "userId": join_user_id,
+                        "source": GROUP_BUY_SOURCE,
+                        "channel": GROUP_BUY_CHANNEL,
+                        "outTradeNo": join_out_trade_no
+                    }
+                )
+
+                assert join_cancel_response.status_code == 200
+                assert join_cancel_response.json()["code"] == "0000"
+
+            if owner_lock_created:
+                owner_cancel_response = group_buy_api_client.post(
+                    "/api/v1/gbm/trade/cancel_market_pay_order",
+                    json={
+                        "userId": owner_user_id,
+                        "source": GROUP_BUY_SOURCE,
+                        "channel": GROUP_BUY_CHANNEL,
+                        "outTradeNo": owner_out_trade_no
+                    }
+                )
+
+                assert owner_cancel_response.status_code == 200
+                assert owner_cancel_response.json()["code"] == "0000"
+
     @pytest.mark.regression
     @allure.story("订单锁定")
     @allure.title("成功锁定并查询拼团订单")
