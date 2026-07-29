@@ -62,6 +62,62 @@ class TestMarketOrderApi:
         assert result["info"] == "非法参数"
         assert result["data"] is None
 
+    @pytest.mark.negative
+    @pytest.mark.regression
+    @pytest.mark.parametrize(
+        "missing_field",
+        [
+            pytest.param(
+                "outTradeNo",
+                id="missing-out-trade-no"
+            ),
+            pytest.param(
+                "notifyConfigVO",
+                id="missing-notify-config"
+            ),
+        ]
+    )
+    @pytest.mark.xfail(
+        strict=True,
+        reason=(
+            "已知缺陷：锁单缺少 outTradeNo 或 notifyConfigVO 时"
+            "返回 0001/未知失败，而不是 0002/非法参数"
+        )
+    )
+    @allure.story("订单锁定参数校验")
+    @allure.title("缺少交易号或通知配置时应返回非法参数")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_lock_market_pay_order_missing_trade_or_notify_field(
+            self,
+            group_buy_api_client,
+            missing_field
+    ):
+        request_body = {
+            "userId": f"pytest-lock-{uuid4().hex[:8]}",
+            "teamId": None,
+            "activityId": GROUP_BUY_ACTIVITY_ID,
+            "goodsId": GROUP_BUY_GOODS_ID,
+            "source": GROUP_BUY_SOURCE,
+            "channel": GROUP_BUY_CHANNEL,
+            "outTradeNo": f"{uuid4().int % 10**12:012d}",
+            "notifyConfigVO": {
+                "notifyType": "MQ"
+            }
+        }
+        request_body.pop(missing_field)
+
+        response = group_buy_api_client.post(
+            "/api/v1/gbm/trade/lock_market_pay_order",
+            json=request_body
+        )
+
+        assert response.status_code == 200
+
+        result = response.json()
+        assert result["code"] == "0002"
+        assert result["info"] == "非法参数"
+        assert result["data"] is None
+
     @pytest.mark.regression
     @allure.story("订单锁定")
     @allure.title("成功锁定并查询拼团订单")
