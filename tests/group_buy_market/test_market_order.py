@@ -189,6 +189,38 @@ class TestMarketOrderApi:
         assert result["info"] == "非法参数"
         assert result["data"] is None
 
+    @pytest.mark.negative
+    @pytest.mark.regression
+    @allure.story("订单锁定活动校验")
+    @allure.title("使用不存在的活动编号锁单时应被拒绝")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_lock_market_pay_order_with_unknown_activity_id(
+            self,
+            group_buy_api_client
+    ):
+        response = group_buy_api_client.post(
+            "/api/v1/gbm/trade/lock_market_pay_order",
+            json={
+                "userId": f"pytest-lock-{uuid4().hex[:8]}",
+                "teamId": None,
+                "activityId": 999999999,
+                "goodsId": GROUP_BUY_GOODS_ID,
+                "source": GROUP_BUY_SOURCE,
+                "channel": GROUP_BUY_CHANNEL,
+                "outTradeNo": f"{uuid4().int % 10**12:012d}",
+                "notifyConfigVO": {
+                    "notifyType": "MQ"
+                }
+            }
+        )
+
+        assert response.status_code == 200
+
+        result = response.json()
+        assert result["code"] == "E0002"
+        assert result["info"] == "无拼团营销配置"
+        assert result["data"] is None
+
     @pytest.mark.regression
     @allure.story("订单锁定")
     @allure.title("成功锁定并查询拼团订单")
