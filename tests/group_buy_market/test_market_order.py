@@ -5,6 +5,7 @@ import allure
 import pytest
 
 from testdata import (
+    GROUP_BUY_ACTIVITY_ID,
     GROUP_BUY_CHANNEL,
     GROUP_BUY_GOODS_ID,
     GROUP_BUY_SOURCE,
@@ -14,6 +15,52 @@ from testdata import (
 @allure.epic("Group Buy Market 接口自动化")
 @allure.feature("拼团交易")
 class TestMarketOrderApi:
+
+    @pytest.mark.negative
+    @pytest.mark.regression
+    @pytest.mark.parametrize(
+        "missing_field",
+        [
+            pytest.param("userId", id="missing-user-id"),
+            pytest.param("source", id="missing-source"),
+            pytest.param("channel", id="missing-channel"),
+            pytest.param("goodsId", id="missing-goods-id"),
+            pytest.param("activityId", id="missing-activity-id"),
+        ]
+    )
+    @allure.story("订单锁定参数校验")
+    @allure.title("缺少锁单必填字段时应返回非法参数")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_lock_market_pay_order_missing_required_field(
+            self,
+            group_buy_api_client,
+            missing_field
+    ):
+        request_body = {
+            "userId": f"pytest-lock-{uuid4().hex[:8]}",
+            "teamId": None,
+            "activityId": GROUP_BUY_ACTIVITY_ID,
+            "goodsId": GROUP_BUY_GOODS_ID,
+            "source": GROUP_BUY_SOURCE,
+            "channel": GROUP_BUY_CHANNEL,
+            "outTradeNo": f"{uuid4().int % 10**12:012d}",
+            "notifyConfigVO": {
+                "notifyType": "MQ"
+            }
+        }
+        request_body.pop(missing_field)
+
+        response = group_buy_api_client.post(
+            "/api/v1/gbm/trade/lock_market_pay_order",
+            json=request_body
+        )
+
+        assert response.status_code == 200
+
+        result = response.json()
+        assert result["code"] == "0002"
+        assert result["info"] == "非法参数"
+        assert result["data"] is None
 
     @pytest.mark.regression
     @allure.story("订单锁定")
