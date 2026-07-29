@@ -90,6 +90,7 @@ Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地�
 | BUG-010 | 拼团商品、来源或渠道无活动配置时，`E0002/无拼团营销配置` 被控制器转换为 `0001/未知失败` | `xfail(strict=True)` 参数化覆盖 3 个场景 |
 | BUG-011 | 拼团锁单缺少 `outTradeNo` 或 `notifyConfigVO` 时未在入口校验，返回 `0001/未知失败` | `xfail(strict=True)` 参数化覆盖 2 个字段 |
 | BUG-012 | 拼团锁单传入不支持的通知类型时未在入口校验，返回 `0001/未知失败` | `xfail(strict=True)` |
+| BUG-013 | 拼团锁单未校验 `activityId` 与 `goodsId` 的绑定关系，可套用其他商品活动并产生负折扣金额 | `xfail(strict=True)`，用例自动取消异常订单 |
 | LIMIT-001 | Demo 暂未接入身份认证，调用方可以直接传入 userId | 作为生产化改造项，不计为当前 Demo 阻断缺陷 |
 | OPT-001 | 并发重复通知被唯一索引挡住后，部分响应仍显示在 `grantedOutTradeNoList` | 保留数据层幂等断言并记录待优化 |
 | OPT-002 | 相同 requestId 的重复聊天不会重复扣额度，但仍会再次调用 AI 模型 | 额度幂等已验证，建议在模型调用前判断 requestId |

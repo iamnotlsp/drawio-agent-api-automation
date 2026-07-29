@@ -221,6 +221,87 @@ class TestMarketOrderApi:
         assert result["info"] == "无拼团营销配置"
         assert result["data"] is None
 
+    @pytest.mark.negative
+    @pytest.mark.regression
+    @pytest.mark.xfail(
+        strict=True,
+        reason=(
+            "已知缺陷：锁单未校验 activityId 与 goodsId 的绑定关系，"
+            "可套用其他商品活动并产生异常价格"
+        )
+    )
+    @allure.story("订单锁定活动校验")
+    @allure.title("活动与商品不匹配时应拒绝锁单")
+    @allure.severity(allure.severity_level.BLOCKER)
+    def test_lock_market_pay_order_with_mismatched_activity_and_goods(
+            self,
+            group_buy_api_client
+    ):
+        user_id = f"pytest-lock-mismatch-{uuid4().hex[:8]}"
+        out_trade_no = f"{uuid4().int % 10**12:012d}"
+
+        other_config_response = group_buy_api_client.post(
+            "/api/v1/gbm/index/query_group_buy_market_config",
+            json={
+                "userId": user_id,
+                "source": GROUP_BUY_SOURCE,
+                "channel": GROUP_BUY_CHANNEL,
+                "goodsId": "9890003"
+            }
+        )
+
+        assert other_config_response.status_code == 200
+
+        other_config_result = other_config_response.json()
+        assert other_config_result["code"] == "0000"
+        mismatched_activity_id = other_config_result[
+            "data"
+        ]["activityId"]
+        lock_created = False
+
+        try:
+            response = group_buy_api_client.post(
+                "/api/v1/gbm/trade/lock_market_pay_order",
+                json={
+                    "userId": user_id,
+                    "teamId": None,
+                    "activityId": mismatched_activity_id,
+                    "goodsId": GROUP_BUY_GOODS_ID,
+                    "source": GROUP_BUY_SOURCE,
+                    "channel": GROUP_BUY_CHANNEL,
+                    "outTradeNo": out_trade_no,
+                    "notifyConfigVO": {
+                        "notifyType": "MQ"
+                    }
+                }
+            )
+
+            assert response.status_code == 200
+
+            result = response.json()
+            lock_created = (
+                result.get("code") == "0000"
+                and result.get("data") is not None
+            )
+
+            assert result["code"] == "E0002"
+            assert result["info"] == "无拼团营销配置"
+            assert result["data"] is None
+        finally:
+            if lock_created:
+                cancel_response = group_buy_api_client.post(
+                    "/api/v1/gbm/trade/cancel_market_pay_order",
+                    json={
+                        "userId": user_id,
+                        "source": GROUP_BUY_SOURCE,
+                        "channel": GROUP_BUY_CHANNEL,
+                        "outTradeNo": out_trade_no
+                    }
+                )
+
+                assert cancel_response.status_code == 200
+                assert cancel_response.json()["code"] == "0000"
+
     @pytest.mark.regression
     @allure.story("订单锁定")
     @allure.title("成功锁定并查询拼团订单")
