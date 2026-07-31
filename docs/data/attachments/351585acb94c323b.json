@@ -1,7 +1,0 @@
-{
-  "method": "GET",
-  "url": "http://127.0.0.1:8091/api/v1/credit/query_credit_order_list/pytest-direct-02d7a50c",
-  "timeoutSeconds": 5,
-  "params": null,
-  "json": null
-}
