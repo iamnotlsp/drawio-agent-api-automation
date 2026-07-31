@@ -3,6 +3,10 @@
 基于 `pytest + requests + JSON Schema + Allure` 搭建的接口自动化测试项目，
 覆盖 DrawIOAgent、group-buy-market 以及“拼团购买额度”的跨系统业务链路。
 
+[![Deploy Allure Report](https://github.com/iamnotlsp/drawio-agent-api-automation/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/iamnotlsp/drawio-agent-api-automation/actions/workflows/deploy-pages.yml)
+
+[在线查看 Allure 测试报告](https://iamnotlsp.github.io/drawio-agent-api-automation/)
+
 ## 测试结果
 
 最近一次本地全量回归：
@@ -19,7 +23,7 @@
 > 21 个 xfail 包含 14 类已确认缺陷对应的 20 个用例，以及
 > 1 个 Demo 身份认证设计边界用例。
 
-Allure 在线报告发布到 GitHub Pages 后，可从仓库主页的 Pages 地址访问。
+Allure 在线报告已发布到 GitHub Pages，可通过上方链接直接访问。
 本地报告入口为 `docs/index.html`。
 
 ## 覆盖范围
