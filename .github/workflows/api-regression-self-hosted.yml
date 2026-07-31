@@ -25,14 +25,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Clean previous test artifacts
-        shell: pwsh
+        shell: powershell
         run: |
           Remove-Item -Recurse -Force `
             "allure-results", "docs" `
             -ErrorAction SilentlyContinue
 
       - name: Check local services
-        shell: pwsh
+        shell: powershell
         run: |
           $ports = 8091, 8092
           foreach ($port in $ports) {
@@ -47,7 +47,7 @@ jobs:
           }
 
       - name: Run pytest and generate Allure report
-        shell: pwsh
+        shell: powershell
         run: |
           $pythonExecutable = "C:\Users\11600\.conda\envs\DrawIOAgentApiTest\python.exe"
           $allureExecutable = "C:\Users\11600\AppData\Roaming\npm\allure.ps1"
@@ -83,7 +83,7 @@ jobs:
 
       - name: Commit latest report
         if: always() && github.ref == 'refs/heads/main'
-        shell: pwsh
+        shell: powershell
         run: |
           if (-not (Test-Path -LiteralPath "docs\index.html")) {
             Write-Host "No generated report to publish."
