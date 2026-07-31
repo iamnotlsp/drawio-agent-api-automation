@@ -1,0 +1,14 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 14.54,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "userId": "pytest-e2e-f18a7a09",
+      "teamId": "74853559",
+      "activityId": 100124,
+      "outTradeNo": "944446222216"
+    }
+  }
+}

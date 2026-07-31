@@ -1,0 +1,18 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8092/api/v1/gbm/trade/lock_market_pay_order",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "userId": "pytest-lock-e615e23c",
+    "teamId": null,
+    "activityId": 100124,
+    "goodsId": "9890002",
+    "source": "s01",
+    "channel": "c01",
+    "outTradeNo": "015503602956",
+    "notifyConfigVO": {
+      "notifyType": "HTTP"
+    }
+  }
+}

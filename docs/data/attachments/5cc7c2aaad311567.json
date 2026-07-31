@@ -1,0 +1,18 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 2.24,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "userId": "pytest-session-recovery-7fd4a7b3",
+      "availableCredits": 99.0,
+      "frozenCredits": 0.0,
+      "totalGrantedCredits": 100.0,
+      "totalUsedCredits": 1.0,
+      "status": "NORMAL",
+      "createTime": "2026-07-31T17:14:57",
+      "updateTime": "2026-07-31T17:14:58"
+    }
+  }
+}

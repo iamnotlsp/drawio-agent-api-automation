@@ -1,0 +1,12 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8091/api/v1/chat",
+  "timeoutSeconds": 10,
+  "params": null,
+  "json": {
+    "agentId": "300000",
+    "userId": "pytest-no-credit-d00c4cdc",
+    "sessionId": "87687844-b12f-4330-aae4-352fe0f10a30",
+    "requestId": "pytest-f6af521e81e142199e943cc7df1356e8"
+  }
+}

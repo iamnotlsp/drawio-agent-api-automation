@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 3329.12,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "type": "user",
+      "content": "CTX-0B7715A5",
+      "sessionId": "46d0b3e6-1ea3-4c3e-b033-e92f635e4c0f",
+      "requestId": "pytest-context-2-4c8080224f7b4cfba350d3d7274860aa",
+      "durationMs": 3296,
+      "costCredits": 1,
+      "remainingCredits": 98
+    }
+  }
+}

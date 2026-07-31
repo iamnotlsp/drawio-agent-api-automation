@@ -1,0 +1,13 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8091/api/v1/chat",
+  "timeoutSeconds": 60,
+  "params": null,
+  "json": {
+    "agentId": "300000",
+    "userId": "pytest-context-d5c41a90",
+    "sessionId": "46d0b3e6-1ea3-4c3e-b033-e92f635e4c0f",
+    "requestId": "pytest-context-2-4c8080224f7b4cfba350d3d7274860aa",
+    "message": "我刚才让你记住的测试代号是什么？只回复代号，不要绘图。"
+  }
+}

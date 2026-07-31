@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8092/api/v1/gbm/index/query_group_buy_market_config",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "userId": "pytest-market-311c69dc",
+    "source": "s01",
+    "goodsId": "9890002"
+  }
+}

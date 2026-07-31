@@ -1,0 +1,11 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 1.57,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "sessionId": "1e26f952-510f-426f-aaea-57a23a103c7c"
+    }
+  }
+}
