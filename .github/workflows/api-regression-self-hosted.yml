@@ -15,6 +15,8 @@ concurrency:
 jobs:
   regression:
     name: Run pytest and publish Allure
+    outputs:
+      report_ready: ${{ steps.publish_report.outputs.ready }}
     runs-on:
       - self-hosted
       - Windows
@@ -84,10 +86,12 @@ jobs:
           retention-days: 14
 
       - name: Commit latest report
+        id: publish_report
         if: always() && github.ref == 'refs/heads/main'
         shell: powershell
         run: |
           if (-not (Test-Path -LiteralPath "docs\index.html")) {
+            "ready=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
             Write-Host "No generated report to publish."
             exit 0
           }
@@ -98,17 +102,19 @@ jobs:
 
           git diff --cached --quiet
           if ($LASTEXITCODE -eq 0) {
+            "ready=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
             Write-Host "Allure report has no changes."
             exit 0
           }
 
           git commit -m "report: update Allure from run $env:GITHUB_RUN_NUMBER"
           git push origin HEAD:main
+          "ready=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
   deploy:
     name: Deploy Allure to GitHub Pages
     needs: regression
-    if: always()
+    if: always() && needs.regression.outputs.report_ready == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
