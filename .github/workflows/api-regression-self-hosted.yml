@@ -1,0 +1,104 @@
+name: API Regression on Self-hosted Runner
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: api-regression-self-hosted
+  cancel-in-progress: false
+
+jobs:
+  regression:
+    name: Run pytest and publish Allure
+    runs-on:
+      - self-hosted
+      - Windows
+      - X64
+      - drawio-api
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clean previous test artifacts
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force `
+            "allure-results", "docs" `
+            -ErrorAction SilentlyContinue
+
+      - name: Check local services
+        shell: pwsh
+        run: |
+          $ports = 8091, 8092
+          foreach ($port in $ports) {
+            $available = Test-NetConnection `
+              -ComputerName "127.0.0.1" `
+              -Port $port `
+              -InformationLevel Quiet
+
+            if (-not $available) {
+              throw "Local service port $port is unavailable."
+            }
+          }
+
+      - name: Run pytest and generate Allure report
+        shell: pwsh
+        run: |
+          $pythonExecutable = "C:\Users\11600\.conda\envs\DrawIOAgentApiTest\python.exe"
+          $allureExecutable = "C:\Users\11600\AppData\Roaming\npm\allure.ps1"
+
+          if (-not (Test-Path -LiteralPath $pythonExecutable)) {
+            throw "Python executable not found: $pythonExecutable"
+          }
+          if (-not (Test-Path -LiteralPath $allureExecutable)) {
+            throw "Allure executable not found: $allureExecutable"
+          }
+
+          & .\scripts\run_allure.ps1 `
+            -PythonExecutable $pythonExecutable `
+            -AllureExecutable $allureExecutable
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ github.run_number }}
+          path: allure-results
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ github.run_number }}
+          path: docs
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Commit latest report
+        if: always() && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath "docs\index.html")) {
+            Write-Host "No generated report to publish."
+            exit 0
+          }
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all docs
+
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Allure report has no changes."
+            exit 0
+          }
+
+          git commit -m "report: update Allure from run $env:GITHUB_RUN_NUMBER"
+          git push origin HEAD:main
