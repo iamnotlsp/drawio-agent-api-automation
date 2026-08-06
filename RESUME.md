@@ -14,13 +14,13 @@ DrawIOAgent 跨系统接口自动化测试
 ## 技术栈
 
 Python、pytest、requests、JSON Schema、Allure、GitHub Actions、
-ThreadPoolExecutor
+self-hosted runner、GitHub Pages、PowerShell、ThreadPoolExecutor
 
 ## 简历职责与成果
 
 - 基于 pytest fixture 封装多服务 API Client、环境参数和动态测试数据，
   支持通过命令行切换 DrawIOAgent 与拼团服务地址。
-- 设计并实现 37 个接口自动化用例，覆盖正常流程、异常校验、参数化、
+- 设计并实现 61 个接口自动化用例，覆盖正常流程、异常校验、参数化、
   顺序幂等、并发幂等以及三人拼团购买额度的跨系统 E2E 链路。
 - 覆盖“购买额度—创建会话—AI 对话/图片解析—额度扣减”端到端链路，
   验证相同 requestId 重复请求时消费额度不被重复扣减，并验证失效
@@ -37,9 +37,11 @@ ThreadPoolExecutor
   非法图片请求仅返回未知失败、图片 requestId 跨用户复用可逃避扣费
   等问题；同时识别 Demo 未接入身份认证的生产化设计边界。
 - 接入 Allure 的 Epic、Feature、Story、Severity 和 HTTP 请求/响应附件，
-  最近一次全量回归结果为 26 passed、11 xfailed、0 unexpected failures。
-- 编写 PowerShell 一键回归脚本，并通过 GitHub Actions 将静态 Allure
-  报告发布至 GitHub Pages。
+  最近一次全量回归结果为 40 passed、21 xfailed、0 unexpected failures，
+  生成 463 个请求、响应及日志附件。
+- 编写 PowerShell 一键回归脚本，基于 GitHub Actions 与 Windows
+  self-hosted runner 实现本地服务健康检查、pytest 自动回归、测试产物归档，
+  并将 Allure 报告持续部署至 GitHub Pages。
 
 ## 面试时可以重点说明
 
@@ -48,7 +50,9 @@ ThreadPoolExecutor
 3. 为什么共享 requests.Session 不适合直接用于多线程并发测试。
 4. 异步到账为什么使用有限次数轮询，而不是固定 sleep。
 5. xfail 与普通失败的区别，以及为什么使用 strict=True。
-6. GitHub 云端无法访问本机服务时，为什么选择本地执行测试、Pages
-   只负责发布静态报告。
+6. GitHub 托管运行器无法访问本机服务时，为什么使用 self-hosted runner
+   执行测试，并将测试与 Pages 部署拆分到 Windows、Linux 两个 Job。
 
-> 发布到 GitHub 后，在简历项目名称旁补充仓库地址和 Allure Pages 地址。
+> 仓库：https://github.com/iamnotlsp/drawio-agent-api-automation
+>
+> Allure：https://iamnotlsp.github.io/drawio-agent-api-automation/

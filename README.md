@@ -3,13 +3,13 @@
 基于 `pytest + requests + JSON Schema + Allure` 搭建的接口自动化测试项目，
 覆盖 DrawIOAgent、group-buy-market 以及“拼团购买额度”的跨系统业务链路。
 
-[![Deploy Allure Report](https://github.com/iamnotlsp/drawio-agent-api-automation/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/iamnotlsp/drawio-agent-api-automation/actions/workflows/deploy-pages.yml)
+[![API Regression](https://github.com/iamnotlsp/drawio-agent-api-automation/actions/workflows/api-regression-self-hosted.yml/badge.svg)](https://github.com/iamnotlsp/drawio-agent-api-automation/actions/workflows/api-regression-self-hosted.yml)
 
 [在线查看 Allure 测试报告](https://iamnotlsp.github.io/drawio-agent-api-automation/)
 
 ## 测试结果
 
-最近一次本地全量回归：
+最近一次 GitHub Actions 全量回归：
 
 | 指标 | 结果 |
 |---|---:|
@@ -17,7 +17,7 @@
 | 通过 | 40 |
 | 预期失败（xfail） | 21 |
 | 非预期失败 | 0 |
-| 执行耗时 | 98 秒 |
+| 执行耗时 | 61 秒 |
 | Allure 请求/响应及日志附件 | 463 |
 
 > 21 个 xfail 包含 14 类已确认缺陷对应的 20 个用例，以及
@@ -178,8 +178,9 @@ allure open docs
 
 ## 发布 GitHub Pages
 
-仓库内的 `.github/workflows/deploy-pages.yml` 会在 `docs/` 更新并推送到
-`main` 分支后发布 Allure 静态报告。
+仓库内的 `.github/workflows/api-regression-self-hosted.yml` 使用 Windows
+self-hosted runner 访问本机测试环境，依次完成服务端口检查、pytest 全量回归、
+Allure 报告生成、测试产物归档和 GitHub Pages 部署。
 
 首次发布时，在 GitHub 仓库中进入：
 
@@ -187,11 +188,12 @@ allure open docs
 Settings → Pages → Build and deployment → Source → GitHub Actions
 ```
 
-然后在 `Actions` 页面运行 `Deploy Allure Report`，或再次推送 `docs/` 变更。
+然后在 `Actions` 页面手动运行 `API Regression on Self-hosted Runner`。
 
 由于测试服务运行在本机 `8091/8092`，GitHub 托管运行器无法直接访问，
-因此当前流程是在真实本地测试环境执行回归，再由 GitHub Actions 部署已经生成的
-静态报告。后续具备独立测试环境或自托管 Runner 后，可以将测试执行也迁入 CI。
+因此使用仓库级 self-hosted runner 在真实本地测试环境执行回归；报告生成后，
+再由 GitHub 托管运行器部署到 Pages。工作流仅开放 `workflow_dispatch` 手动触发，
+避免公开仓库中的外部事件直接调用本机 Runner。
 
 ## 技术特点
 
