@@ -29,6 +29,11 @@ jobs:
       - drawio-api
     timeout-minutes: 40
     env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: http.sslBackend
+      GIT_CONFIG_VALUE_0: openssl
+      GIT_CONFIG_KEY_1: http.version
+      GIT_CONFIG_VALUE_1: HTTP/1.1
       DRAWIO_AGENT_PROJECT_DIR: E:/javaProject/DrawIOAgent
       GROUP_BUY_MARKET_PROJECT_DIR: E:/javaProject/group-buy-market
       DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
