@@ -1,0 +1,23 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 9.69,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "activityId": 100124,
+      "goods": {
+        "goodsId": "9890002",
+        "originalPrice": 12.9,
+        "deductionPrice": 10.0,
+        "payPrice": 2.9
+      },
+      "teamList": [],
+      "teamStatistic": {
+        "allTeamCount": 19,
+        "allTeamCompleteCount": 19,
+        "allTeamUserCount": 57
+      }
+    }
+  }
+}

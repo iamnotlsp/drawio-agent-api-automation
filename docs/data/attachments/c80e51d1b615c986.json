@@ -1,0 +1,18 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 3.59,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "userId": "pytest-auth-victim-fbd8bed7",
+      "availableCredits": 98.0,
+      "frozenCredits": 0.0,
+      "totalGrantedCredits": 100.0,
+      "totalUsedCredits": 2.0,
+      "status": "NORMAL",
+      "createTime": "2026-08-06T15:57:26",
+      "updateTime": "2026-08-06T15:57:38"
+    }
+  }
+}

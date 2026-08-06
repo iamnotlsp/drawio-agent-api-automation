@@ -1,0 +1,12 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:18092/api/v1/gbm/trade/cancel_market_pay_order",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "userId": "pytest-team-join-fa350048",
+    "source": "s01",
+    "channel": "c01",
+    "outTradeNo": "598131974050"
+  }
+}

@@ -1,9 +1,0 @@
-{
-  "statusCode": 200,
-  "elapsedMilliseconds": 3.65,
-  "body": {
-    "code": "0002",
-    "info": "非法参数",
-    "data": null
-  }
-}

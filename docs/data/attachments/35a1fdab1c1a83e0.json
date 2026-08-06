@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 13152.41,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "type": "drawio",
+      "content": "<mxfile><diagram><mxGraphModel><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/><mxCell id=\"2\" value=\"\" style=\"rounded=0;whiteSpace=wrap;html=1;\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"100\" y=\"100\" width=\"120\" height=\"80\" as=\"geometry\"/></mxCell><mxCell id=\"3\" value=\"\" style=\"rounded=0;whiteSpace=wrap;html=1;\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"320\" y=\"100\" width=\"120\" height=\"80\" as=\"geometry\"/></mxCell><mxCell id=\"4\" value=\"\" style=\"endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\" edge=\"1\" parent=\"1\" source=\"2\" target=\"3\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></root></mxGraphModel></diagram></mxfile>",
+      "sessionId": "51b60da2-769b-49e2-b605-e5ca31471d0c",
+      "requestId": "pytest-7f38da7974bb4781af7064a3c4921bf4",
+      "durationMs": 13145,
+      "costCredits": 1,
+      "remainingCredits": 99
+    }
+  }
+}

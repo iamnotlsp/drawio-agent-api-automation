@@ -1,0 +1,14 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:18091/api/v1/analyze_diagram_image",
+  "timeoutSeconds": 60,
+  "params": null,
+  "json": {
+    "agentId": "300001",
+    "userId": "pytest-image-owner-b6e00a26",
+    "sessionId": null,
+    "requestId": "pytest-7f38da7974bb4781af7064a3c4921bf4",
+    "message": "请简要描述图片中的流程关系",
+    "imageDataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAAB4CAIAAABD1OhwAAACWUlEQVR4nO3cy2ojURBEwf7/n/YsBMLo0ZDgnq5KItZCVF4Oxnjh4weKHHcfAH9J0FQRNFUETRVBU0XQVBE0VQRNFUFTRdBUETRVBE0VQVNF0FQRNFUETRVBU0XQVBE0VQRNFUFTRdBUETRVBE0VQVNF0FQRNFUETRVBU0XQVBE0VQRNFUFTRdBUyYI+Gl30sne5+zkvEcxPHyt83uksmk/QAYvmE3TAovkEHbBoPkEHLJpP0AGL5hN0wKL5BB2waD5BByyaT9ABi+YTdMCi+QQdsGg+QQcsmk/QAYvmE3TAovkEHdi46PzmjYvOCTqwdNHJ2UsXnRB0YO+ib5fvXfSNoAOrF308fvWijwQd2L7o/f7ti94JOlCw6GVCwaIXgg50LPq9omPRb4IO1Cx6DqlZ9CToQNOix5amRQ+CDnz7zyar3f2ofyxaJOieRYef0IKuWXT4Hfrx4eu+eoWORYe/cjw/fN1Xr1Cw6GVCwaIXgg5sX/R+//ZF7wQdWL3o4/GrF30k6MDeRd8u37voG0EHli46OXvpohOCDmxcdH7zxkXnBB2waD5BByyaT9ABi+YTdMCi+QQdsGg+QQcsmk/QAYvmE3TAovkEHbBoPkEHLJpP0AGL5hN0wKL5BB2waD5BByyaT9ABi+a7Nug+4fNOd/dzXiKYf93Lwv8naKoImiqCpoqgqSJoqgiaKoKmiqCpImiqCJoqgqaKoKkiaKoImiqCpoqgqSJoqgiaKoKmiqCpImiqCJoqgqaKoKkiaKoImiqCpoqgqSJoqgiaKoKmiqCpImiq/AMkpqNtCHkeTQAAAABJRU5ErkJggg=="
+  }
+}

@@ -1,2 +1,0 @@
-INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:18091/api/v1/credit/grant_group_buy_success timeout=5s
-INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:18091/api/v1/credit/grant_group_buy_success status=200 elapsed_ms=6.11 body={"code": "0000", "info": "成功", "data": {"teamId": "79803102", "grantedOutTradeNoList": [], "skippedOutTradeNoList": [], "failedOutTradeNoList": []}}

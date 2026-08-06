@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 10052.79,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "type": "user",
+      "content": "Please provide the diagram topic, key nodes, and relationships.",
+      "sessionId": "635ac73e-5915-4835-bd58-51d2c686ad7f",
+      "requestId": "pytest-shared-ff8d38bcf32f4e84a943795c0c355c9f",
+      "durationMs": 10039,
+      "costCredits": 2,
+      "remainingCredits": 98
+    }
+  }
+}

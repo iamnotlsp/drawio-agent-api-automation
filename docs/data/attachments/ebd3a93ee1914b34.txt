@@ -1,2 +1,0 @@
-INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:18092/api/v1/gbm/trade/lock_market_pay_order timeout=5s
-INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:18092/api/v1/gbm/trade/lock_market_pay_order status=200 elapsed_ms=3.31 body={"code": "0002", "info": "非法参数", "data": null}

@@ -1,0 +1,15 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 14.29,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "orderId": "535362253195",
+      "originalPrice": 59.9,
+      "deductionPrice": 40.0,
+      "payPrice": 19.9,
+      "tradeOrderStatus": 0
+    }
+  }
+}

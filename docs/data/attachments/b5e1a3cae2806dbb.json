@@ -1,0 +1,14 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 10.05,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "userId": "pytest-team-join-fa350048",
+      "teamId": "45668333",
+      "outTradeNo": "598131974050",
+      "canceled": true
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:18092/api/v1/gbm/trade/settlement_market_pay_order",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "userId": "pytest-pay-443d3604",
+    "source": "s01",
+    "channel": "c01",
+    "outTradeNo": "267914904390",
+    "outTradeTime": "2026-08-06T07:59:26.270538+00:00"
+  }
+}

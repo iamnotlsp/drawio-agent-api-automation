@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 8337.14,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "type": "user",
+      "content": "```json\n{\n  \"type\": \"drawio\",\n  \"content\": \"<mxfile><diagram name=\\\"Page-1\\\"><mxGraphModel><root><mxCell id=\\\"0\\\"/><mxCell id=\\\"1\\\" parent=\\\"0\\\"/><mxCell id=\\\"2\\\" value=\\\"\\\" style=\\\"rounded=0;whiteSpace=wrap;html=1;\\\" vertex=\\\"1\\\" parent=\\\"1\\\"><mxGeometry x=\\\"100\\\" y=\\\"100\\\" width=\\\"120\\\" height=\\\"80\\\" as=\\\"geometry\\\"/></mxCell><mxCell id=\\\"3\\\" value=\\\"\\\" style=\\\"rounded=0;whiteSpace=wrap;html=1;\\\" vertex=\\\"1\\\" parent=\\\"1\\\"><mxGeometry x=\\\"320\\\" y=\\\"100\\\" width=\\\"120\\\" height=\\\"80\\\" as=\\\"geometry\\\"/></mxCell><mxCell id=\\\"4\\\" value=\\\"\\\" style=\\\"endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\\\" edge=\\\"1\\\" source=\\\"2\\\" target=\\\"3\\\" parent=\\\"1\\\"><mxGeometry relative=\\\"1\\\" as=\\\"geometry\\\"/></mxCell></root></mxGraphModel></diagram></mxfile>\"\n}\n```",
+      "sessionId": "85428d90-7fff-44e0-98b6-9af675b0d001",
+      "requestId": "pytest-1f2b5d6680c243a0a9ecc01aa4135b71",
+      "durationMs": 8324,
+      "costCredits": 1,
+      "remainingCredits": 99
+    }
+  }
+}

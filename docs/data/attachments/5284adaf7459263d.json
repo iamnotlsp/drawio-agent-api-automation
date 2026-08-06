@@ -1,7 +1,0 @@
-{
-  "method": "GET",
-  "url": "http://127.0.0.1:18091/api/v1/credit/query_credit_order/624563689519",
-  "timeoutSeconds": 5,
-  "params": null,
-  "json": null
-}

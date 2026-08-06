@@ -1,0 +1,36 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 18.79,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "activityId": 100124,
+      "goods": {
+        "goodsId": "9890002",
+        "originalPrice": 12.9,
+        "deductionPrice": 10.0,
+        "payPrice": 2.9
+      },
+      "teamList": [
+        {
+          "userId": "pytest-pay-443d3604",
+          "teamId": "82392626",
+          "activityId": 100124,
+          "targetCount": 3,
+          "completeCount": 1,
+          "lockCount": 1,
+          "validStartTime": "2026-08-06T07:59:26.000+00:00",
+          "validEndTime": "2027-07-19T13:19:26.000+00:00",
+          "validTimeCountdown": "05:19:59",
+          "outTradeNo": null
+        }
+      ],
+      "teamStatistic": {
+        "allTeamCount": 20,
+        "allTeamCompleteCount": 19,
+        "allTeamUserCount": 58
+      }
+    }
+  }
+}

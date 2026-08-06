@@ -1,4 +1,0 @@
-INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:18091/api/v1/create_session timeout=5s
-INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:18091/api/v1/create_session status=200 elapsed_ms=6.31 body={"code": "0000", "info": "成功", "data": {"sessionId": "980ee338-0b0a-499a-b3b2-c558ffdbd477"}}
-INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:18091/api/v1/chat_stream timeout=60s
-INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:18091/api/v1/chat_stream status=200 elapsed_ms=24200.73 body=data:{"type":"user\n\ndata:","content":"Please\n\ndata: provide the diagram topic\n\ndata:, key nodes,\n\ndata: and relationships."}\n\n
