@@ -1,0 +1,7 @@
+{
+  "method": "GET",
+  "url": "http://127.0.0.1:8091/api/v1/credit/query_credit_account/pytest-direct-conflict-fdf2a6c4",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": null
+}

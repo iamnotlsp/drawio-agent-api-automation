@@ -1,0 +1,27 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 4.31,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "userId": "pytest-e2e-48cc9ef1",
+      "teamId": "71242431",
+      "orderId": "767018490055",
+      "outTradeNo": "488165919287",
+      "goodsId": "9890002",
+      "goodsName": "Draw.io Agent 对话额度包 - 套餐1 100点",
+      "credits": 100.0,
+      "payPrice": 2.9,
+      "status": "CREDIT_GRANTED",
+      "statusInfo": "额度已发放",
+      "paidTime": "2026-08-06T02:31:43",
+      "grantTime": "2026-08-06T10:31:44",
+      "createTime": "2026-08-06T10:31:43",
+      "updateTime": "2026-08-06T10:31:43",
+      "targetCount": 3,
+      "joinedCount": 3,
+      "teamStatus": 1
+    }
+  }
+}

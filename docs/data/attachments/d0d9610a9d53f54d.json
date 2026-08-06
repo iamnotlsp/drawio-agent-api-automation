@@ -1,0 +1,10 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8091/api/v1/create_session",
+  "timeoutSeconds": 5,
+  "params": null,
+  "json": {
+    "agentId": "300000",
+    "userId": "pytest-context-62a9d25f"
+  }
+}

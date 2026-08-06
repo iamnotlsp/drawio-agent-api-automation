@@ -1,0 +1,13 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:8091/api/v1/chat_stream",
+  "timeoutSeconds": 60,
+  "params": null,
+  "json": {
+    "agentId": "300000",
+    "userId": "pytest-no-credit-e2139f68",
+    "sessionId": "0483de5a-13d0-4f0b-911d-8bbb0bb772fd",
+    "requestId": "pytest-5604f544088548fe8bfa4682d023348d",
+    "message": "请只回复：OK"
+  }
+}

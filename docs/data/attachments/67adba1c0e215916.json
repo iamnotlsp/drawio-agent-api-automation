@@ -1,0 +1,9 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 24.75,
+  "body": {
+    "code": "E0002",
+    "info": "无拼团营销配置",
+    "data": null
+  }
+}

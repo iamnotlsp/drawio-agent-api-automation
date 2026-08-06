@@ -1,0 +1,2 @@
+INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:8092/api/v1/gbm/index/query_group_buy_market_config timeout=5s
+INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:8092/api/v1/gbm/index/query_group_buy_market_config status=200 elapsed_ms=3.85 body={"code": "0001", "info": "未知失败", "data": null}

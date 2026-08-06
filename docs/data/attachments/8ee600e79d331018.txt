@@ -1,0 +1,6 @@
+INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:8091/api/v1/credit/purchase_credit_order timeout=5s
+INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:8091/api/v1/credit/purchase_credit_order status=200 elapsed_ms=5.16 body={"code": "0002", "info": "credits must be greater than zero", "data": null}
+INFO     api_client:api_client.py:94 HTTP request method=GET url=http://127.0.0.1:8091/api/v1/credit/query_credit_order/134352788409 timeout=5s
+INFO     api_client:api_client.py:141 HTTP response method=GET url=http://127.0.0.1:8091/api/v1/credit/query_credit_order/134352788409 status=200 elapsed_ms=3.01 body={"code": "0000", "info": "成功", "data": null}
+INFO     api_client:api_client.py:94 HTTP request method=GET url=http://127.0.0.1:8091/api/v1/credit/query_credit_account/pytest-invalid-credit-385975dd timeout=5s
+INFO     api_client:api_client.py:141 HTTP response method=GET url=http://127.0.0.1:8091/api/v1/credit/query_credit_account/pytest-invalid-credit-385975dd status=200 elapsed_ms=3.61 body={"code": "0000", "info": "成功", "data": null}
