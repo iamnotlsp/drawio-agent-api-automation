@@ -1,2 +1,0 @@
-INFO     api_client:api_client.py:94 HTTP request method=POST url=http://127.0.0.1:8092/api/v1/gbm/index/query_group_buy_market_config timeout=5s
-INFO     api_client:api_client.py:141 HTTP response method=POST url=http://127.0.0.1:8092/api/v1/gbm/index/query_group_buy_market_config status=200 elapsed_ms=2.03 body={"code": "0002", "info": "非法参数", "data": null}

@@ -1,0 +1,5 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 12190.41,
+  "body": "data:{\"type\":\"\n\ndata:user\",\"content\":\"\n\ndata:Please provide the diagram\n\ndata: topic, key nodes\n\ndata:, and relationships.\"\n\ndata:}\n\n"
+}

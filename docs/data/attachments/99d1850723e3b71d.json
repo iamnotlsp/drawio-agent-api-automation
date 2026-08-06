@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 5494.45,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "type": "user",
+      "content": "图片展示了一个简单的线性流程关系。包含两个矩形节点，通过一条带箭头的直线连接。箭头从左侧节点指向右侧节点，表示流程、数据或控制从左侧步骤单向流向右侧步骤，体现了先后顺序或依赖关系。",
+      "sessionId": "5ae2dd4c-b906-4c88-ab74-9faecac32d08",
+      "requestId": "pytest-4a20ce236d8b4939b67b7e39ecafc166",
+      "durationMs": 5484,
+      "costCredits": 2,
+      "remainingCredits": 98
+    }
+  }
+}

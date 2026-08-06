@@ -1,0 +1,17 @@
+{
+  "statusCode": 200,
+  "elapsedMilliseconds": 9360.42,
+  "body": {
+    "code": "0000",
+    "info": "成功",
+    "data": {
+      "type": "user",
+      "content": "```json\n{\"type\":\"drawio\",\"content\":\"<mxfile><diagram name=\\\"Page-1\\\"><mxGraphModel><root><mxCell id=\\\"0\\\"/><mxCell id=\\\"1\\\" parent=\\\"0\\\"/><mxCell id=\\\"2\\\" value=\\\"\\\" style=\\\"rounded=0;whiteSpace=wrap;html=1;\\\" vertex=\\\"1\\\" parent=\\\"1\\\"><mxGeometry x=\\\"80\\\" y=\\\"120\\\" width=\\\"120\\\" height=\\\"80\\\" as=\\\"geometry\\\"/></mxCell><mxCell id=\\\"3\\\" value=\\\"\\\" style=\\\"rounded=0;whiteSpace=wrap;html=1;\\\" vertex=\\\"1\\\" parent=\\\"1\\\"><mxGeometry x=\\\"320\\\" y=\\\"120\\\" width=\\\"120\\\" height=\\\"80\\\" as=\\\"geometry\\\"/></mxCell><mxCell id=\\\"4\\\" value=\\\"\\\" style=\\\"endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;\\\" edge=\\\"1\\\" parent=\\\"1\\\" source=\\\"2\\\" target=\\\"3\\\"><mxGeometry relative=\\\"1\\\" as=\\\"geometry\\\"/></mxCell></root></mxGraphModel></diagram></mxfile>\"}\n```\n\n图片中的流程关系：这是一个简单的单向流程，左侧矩形节点通过带箭头的连线指向右侧矩形节点，表示从左到右的顺序执行或数据流向关系。",
+      "sessionId": "ee051c87-551e-4d76-b40a-0e50ec30ecf8",
+      "requestId": "pytest-bf9f7731684f4d5e9e712e1db932d941",
+      "durationMs": 9350,
+      "costCredits": 1,
+      "remainingCredits": 99
+    }
+  }
+}

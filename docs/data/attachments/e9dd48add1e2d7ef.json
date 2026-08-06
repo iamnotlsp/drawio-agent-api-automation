@@ -1,0 +1,13 @@
+{
+  "method": "POST",
+  "url": "http://127.0.0.1:18091/api/v1/chat",
+  "timeoutSeconds": 60,
+  "params": null,
+  "json": {
+    "agentId": "300000",
+    "userId": "pytest-context-bd5ba082",
+    "sessionId": "2383e037-4277-4de2-b546-df88c5e1b761",
+    "requestId": "pytest-context-1-3e91897bbd3f4271b049ec17a45cb752",
+    "message": "请记住测试代号 CTX-7CB018F4，只回复“已记录”，不要绘图。"
+  }
+}
