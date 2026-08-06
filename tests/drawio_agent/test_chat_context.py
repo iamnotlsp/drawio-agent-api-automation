@@ -19,6 +19,7 @@ class TestChatContextApi:
     @pytest.mark.e2e
     @pytest.mark.slow
     @pytest.mark.regression
+    @pytest.mark.ai_quality
     @allure.story("会话上下文记忆")
     @allure.title("同一会话的第二轮对话应记住第一轮测试代号")
     @allure.severity(allure.severity_level.CRITICAL)
@@ -77,17 +78,22 @@ class TestChatContextApi:
                     "sessionId": session_id,
                     "requestId": f"pytest-context-1-{uuid4().hex}",
                     "message": (
-                        f"请记住测试代号 {context_code}，"
-                        "只回复“已记录”，不要绘图。"
+                        "Create a simple two-node Draw.io flowchart "
+                        f"for project code {context_code}. The diagram "
+                        "title and start node must contain the exact "
+                        "project code."
                     )
                 },
-                timeout=60
+                timeout=120
             )
 
             assert first_response.status_code == 200
             first_result = first_response.json()
             assert first_result["code"] == "0000"
             assert first_result["data"]["sessionId"] == session_id
+            assert context_code in str(
+                first_result["data"]["content"]
+            )
 
         with allure.step("第二轮询问第一轮保存的测试代号"):
             second_response = api_client.post(
@@ -98,11 +104,13 @@ class TestChatContextApi:
                     "sessionId": session_id,
                     "requestId": f"pytest-context-2-{uuid4().hex}",
                     "message": (
-                        "我刚才让你记住的测试代号是什么？"
-                        "只回复代号，不要绘图。"
+                        "Modify the previous flowchart by adding an end "
+                        "node. Preserve the exact project code from the "
+                        "previous turn in the diagram title. Return the "
+                        "complete Draw.io diagram."
                     )
                 },
-                timeout=60
+                timeout=120
             )
 
             assert second_response.status_code == 200

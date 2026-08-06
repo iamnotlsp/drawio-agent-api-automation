@@ -142,6 +142,11 @@ jobs:
       - name: Run pytest and generate Allure report
         shell: powershell
         run: |
+          chcp 65001 > $null
+          [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+          $env:PYTHONUTF8 = "1"
+          $env:PYTHONIOENCODING = "utf-8"
+
           $pythonExecutable = "C:\Users\11600\.conda\envs\DrawIOAgentApiTest\python.exe"
           $allureExecutable = "C:\Users\11600\AppData\Roaming\npm\allure.ps1"
 
@@ -156,6 +161,7 @@ jobs:
             -BaseUrl "http://127.0.0.1:18091" `
             -GroupBuyBaseUrl "http://127.0.0.1:18092" `
             -DrawioCallbackBaseUrl "http://drawio-agent:8091" `
+            -MarkerExpression "not ai_quality" `
             -PythonExecutable $pythonExecutable `
             -AllureExecutable $allureExecutable
 

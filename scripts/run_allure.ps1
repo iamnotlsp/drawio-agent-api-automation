@@ -2,6 +2,7 @@ param(
     [string]$BaseUrl = "http://127.0.0.1:8091",
     [string]$GroupBuyBaseUrl = "http://127.0.0.1:8092",
     [string]$DrawioCallbackBaseUrl = "",
+    [string]$MarkerExpression = "",
     [string]$PythonExecutable = "python",
     [string]$AllureExecutable = "allure"
 )
@@ -22,6 +23,10 @@ if (-not [string]::IsNullOrWhiteSpace($DrawioCallbackBaseUrl)) {
         "--drawio-callback-base-url",
         $DrawioCallbackBaseUrl
     )
+}
+
+if (-not [string]::IsNullOrWhiteSpace($MarkerExpression)) {
+    $pytestArguments += @("-m", $MarkerExpression)
 }
 
 & $PythonExecutable @pytestArguments
