@@ -1,7 +1,11 @@
 # DrawIOAgent API Automation
 
-基于 `pytest + requests + JSON Schema + Allure` 搭建的接口自动化测试项目，
-覆盖 DrawIOAgent、group-buy-market 以及“拼团购买额度”的跨系统业务链路。
+基于 `pytest + requests + JSON Schema + Allure + Docker Compose + GitHub Actions`
+搭建的接口自动化测试项目，覆盖 DrawIOAgent、group-buy-market 以及
+“拼团购买额度”的跨系统业务链路。
+
+项目使用 Windows self-hosted runner 在本机自动完成 Java 构建、测试环境创建、
+接口回归、Allure 报告生成、环境清理和 GitHub Pages 发布。
 
 [![API Regression](https://github.com/iamnotlsp/drawio-agent-api-automation/actions/workflows/api-regression-self-hosted.yml/badge.svg)](https://github.com/iamnotlsp/drawio-agent-api-automation/actions/workflows/api-regression-self-hosted.yml)
 
@@ -13,15 +17,20 @@
 
 | 指标 | 结果 |
 |---|---:|
-| 收集用例 | 61 |
-| 通过 | 40 |
+| 测试套件用例 | 61 |
+| CI 执行用例 | 60 |
+| 通过 | 39 |
 | 预期失败（xfail） | 21 |
 | 非预期失败 | 0 |
-| 执行耗时 | 61 秒 |
-| Allure 请求/响应及日志附件 | 463 |
+| AI 质量手动评测 | 1 |
+| 执行耗时 | 3 分 1 秒 |
+| Allure 请求/响应及日志附件 | 452 |
 
 > 21 个 xfail 包含 14 类已确认缺陷对应的 20 个用例，以及
 > 1 个 Demo 身份认证设计边界用例。
+
+> 多轮对话上下文效果依赖真实大模型输出及响应时间，已标记为 `ai_quality`，
+> 保留为手动效果评测，不作为稳定 CI 回归的阻断条件。
 
 Allure 在线报告已发布到 GitHub Pages，可通过上方链接直接访问。
 本地报告入口为 `docs/index.html`。
@@ -38,7 +47,7 @@ Allure 在线报告已发布到 GitHub Pages，可通过上方链接直接访问
 - 相同 requestId 重复聊天时额度扣减幂等
 - sessionId 失效时自动重建会话并正常扣减额度
 - 跨用户复用 sessionId 时自动创建独立会话，避免接入他人上下文
-- 同一 sessionId 下的多轮对话上下文记忆
+- 同一 sessionId 下的多轮对话上下文效果评测（`ai_quality` 手动执行）
 - 流式聊天的无额度拦截与消费记账
 - 拼团成功额度发放
 - 普通购买额度与重复购买幂等
@@ -118,6 +127,9 @@ DrawIOAgentApiTest/
 │   └── e2e/                   # 跨系统端到端测试
 ├── scripts/
 │   └── run_allure.ps1         # 一键回归并生成报告
+├── docker-compose.test.yml     # 隔离的跨系统测试环境
+├── .github/workflows/
+│   └── api-regression-self-hosted.yml
 ├── requirements.txt
 └── pytest.ini
 ```
@@ -125,10 +137,23 @@ DrawIOAgentApiTest/
 ## 环境准备
 
 - Python 3.13
-- DrawIOAgent：默认 `http://127.0.0.1:8091`
-- group-buy-market：默认 `http://127.0.0.1:8092`
-- Java 运行环境（Allure Commandline 使用）
+- Maven 与 Java 8/17 项目构建环境
+- Docker Desktop 与 Docker Compose
 - Allure Commandline
+- GitHub Actions Windows self-hosted runner
+
+本机项目目录（可通过工作流环境变量调整）：
+
+```text
+E:/javaProject/DrawIOAgent
+E:/javaProject/group-buy-market
+```
+
+GitHub Actions 需要配置仓库 Secret：
+
+```text
+DASHSCOPE_API_KEY
+```
 
 安装 Python 依赖：
 
@@ -148,6 +173,18 @@ npm install --global allure-commandline
 
 ```powershell
 python -m pytest -v
+```
+
+执行稳定回归（排除真实模型效果评测）：
+
+```powershell
+python -m pytest -m "not ai_quality" -v
+```
+
+单独执行 AI 多轮对话效果评测：
+
+```powershell
+python -m pytest -m ai_quality -v -s
 ```
 
 执行冒烟测试：
@@ -176,11 +213,46 @@ python -m pytest `
 allure open docs
 ```
 
+### 使用 Docker Compose 执行跨系统回归
+
+Docker 环境使用宿主机端口 `18091/18092`，容器间 HTTP 回调使用
+Compose 服务名 `drawio-agent:8091`：
+
+```powershell
+docker compose -f docker-compose.test.yml up -d --build
+
+python -m pytest `
+  --base-url http://127.0.0.1:18091 `
+  --group-buy-base-url http://127.0.0.1:18092 `
+  --drawio-callback-base-url http://drawio-agent:8091 `
+  -m "not ai_quality" `
+  -v
+
+docker compose -f docker-compose.test.yml down -v --remove-orphans
+```
+
+`down -v` 会删除本轮 MySQL 测试数据卷，保证下一轮从干净数据开始。
+
 ## 发布 GitHub Pages
 
 仓库内的 `.github/workflows/api-regression-self-hosted.yml` 使用 Windows
-self-hosted runner 访问本机测试环境，依次完成服务端口检查、pytest 全量回归、
-Allure 报告生成、测试产物归档和 GitHub Pages 部署。
+self-hosted runner 执行回归。工作流支持 `main` 分支 push 自动触发，也支持
+`workflow_dispatch` 手动触发。
+
+执行链路：
+
+```text
+测试代码提交到 main（AUTO_API_REGRESSION=true）或手动触发
+  → Runner 检出测试仓库
+  → Maven 构建本机 DrawIOAgent 与 group-buy-market
+  → Docker Compose 创建 MySQL、Redis、RabbitMQ 和两个业务服务
+  → 等待 18091/18092 业务接口就绪
+  → pytest 执行稳定回归并生成 Allure
+  → always() 清理容器、网络和测试数据卷
+  → 上传 Allure Artifacts
+  → 提交最新 docs 报告
+  → GitHub 托管运行器部署 GitHub Pages
+```
 
 首次发布时，在 GitHub 仓库中进入：
 
@@ -188,17 +260,34 @@ Allure 报告生成、测试产物归档和 GitHub Pages 部署。
 Settings → Pages → Build and deployment → Source → GitHub Actions
 ```
 
-然后在 `Actions` 页面手动运行 `API Regression on Self-hosted Runner`。
+然后启动本机 Runner。可以在 `Actions` 页面手动运行
+`API Regression on Self-hosted Runner`；是否在 push 到 `main` 时自动执行，
+由仓库变量 `AUTO_API_REGRESSION` 控制。
 
-由于测试服务运行在本机 `8091/8092`，GitHub 托管运行器无法直接访问，
-因此使用仓库级 self-hosted runner 在真实本地测试环境执行回归；报告生成后，
-再由 GitHub 托管运行器部署到 Pages。工作流仅开放 `workflow_dispatch` 手动触发，
-避免公开仓库中的外部事件直接调用本机 Runner。
+在 GitHub 仓库中进入：
+
+```text
+Settings → Secrets and variables → Actions → Variables
+```
+
+创建变量：
+
+```text
+AUTO_API_REGRESSION=false  # push 不执行，仅允许手动 Run workflow
+AUTO_API_REGRESSION=true   # push 自动执行，也可以手动执行
+```
+
+变量未配置时等同于 `false`。关闭状态下，push 触发记录中的回归 Job 会显示
+`Skipped`，不会执行 Maven、Docker 或 pytest；`workflow_dispatch` 手动触发始终执行。
+
+由于 Java 源码和 Docker Desktop 位于本机，构建与测试阶段使用 self-hosted
+runner；Allure 静态页面由 GitHub 托管运行器发布。机器人只更新 `docs/**` 的
+报告提交会被 `paths-ignore` 忽略，避免工作流循环触发。
 
 ## 技术特点
 
 - fixture 管理客户端、环境地址和业务前置数据
-- marker 区分 smoke、regression、negative、e2e、slow
+- marker 区分 smoke、regression、negative、e2e、slow、ai_quality
 - 参数化覆盖多组异常输入
 - xfail 记录已知缺陷，`strict=True` 防止修复后被静默忽略
 - JSON Schema 校验响应契约
@@ -206,3 +295,5 @@ Settings → Pages → Build and deployment → Source → GitHub Actions
 - `ThreadPoolExecutor + Barrier` 模拟并发重复通知
 - 轮询等待异步额度到账，设置超时防止无限等待
 - 自动脱敏并向 Allure 附加请求、响应、耗时和运行环境
+- Docker Compose 每轮创建并销毁独立测试基础设施和数据卷
+- GitHub Actions 支持 push/手动触发、失败后自动清理及 Pages 发布

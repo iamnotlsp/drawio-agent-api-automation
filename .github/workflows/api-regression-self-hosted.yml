@@ -20,6 +20,7 @@ concurrency:
 jobs:
   regression:
     name: Run pytest and publish Allure
+    if: github.event_name == 'workflow_dispatch' || vars.AUTO_API_REGRESSION == 'true'
     outputs:
       report_ready: ${{ steps.publish_report.outputs.ready }}
     runs-on:
