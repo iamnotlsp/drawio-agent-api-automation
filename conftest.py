@@ -22,6 +22,12 @@ def pytest_addoption(parser):
         default="http://127.0.0.1:8092",
         help="拼团服务基础地址"
     )
+    parser.addoption(
+        "--drawio-callback-base-url",
+        action="store",
+        default=None,
+        help="拼团服务回调 DrawIOAgent 时使用的内部地址"
+    )
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -46,6 +52,10 @@ def pytest_sessionfinish(session, exitstatus):
         ),
         "Group Buy Base URL": session.config.getoption(
             "--group-buy-base-url"
+        ),
+        "DrawIOAgent Callback Base URL": (
+            session.config.getoption("--drawio-callback-base-url")
+            or session.config.getoption("--base-url")
         ),
         "Exit Status": exitstatus
     }
@@ -81,6 +91,12 @@ def group_buy_api_client(group_buy_base_url):
 def base_url(pytestconfig):
     url = pytestconfig.getoption("--base-url")
     return url.rstrip("/")
+
+
+@pytest.fixture(scope="session")
+def drawio_callback_base_url(pytestconfig, base_url):
+    url = pytestconfig.getoption("--drawio-callback-base-url")
+    return (url or base_url).rstrip("/")
 
 
 @pytest.fixture(scope="session")

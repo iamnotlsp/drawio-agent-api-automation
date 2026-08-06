@@ -1,18 +1,30 @@
 param(
     [string]$BaseUrl = "http://127.0.0.1:8091",
     [string]$GroupBuyBaseUrl = "http://127.0.0.1:8092",
+    [string]$DrawioCallbackBaseUrl = "",
     [string]$PythonExecutable = "python",
     [string]$AllureExecutable = "allure"
 )
 
 $ErrorActionPreference = "Stop"
 
-& $PythonExecutable -m pytest `
-    --base-url $BaseUrl `
-    --group-buy-base-url $GroupBuyBaseUrl `
-    --alluredir "allure-results" `
-    --clean-alluredir `
-    -v
+$pytestArguments = @(
+    "-m", "pytest",
+    "--base-url", $BaseUrl,
+    "--group-buy-base-url", $GroupBuyBaseUrl,
+    "--alluredir", "allure-results",
+    "--clean-alluredir",
+    "-v"
+)
+
+if (-not [string]::IsNullOrWhiteSpace($DrawioCallbackBaseUrl)) {
+    $pytestArguments += @(
+        "--drawio-callback-base-url",
+        $DrawioCallbackBaseUrl
+    )
+}
+
+& $PythonExecutable @pytestArguments
 
 $pytestExitCode = $LASTEXITCODE
 

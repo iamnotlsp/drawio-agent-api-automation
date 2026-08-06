@@ -1,0 +1,137 @@
+name: drawio-api-test
+
+services:
+  mysql:
+    image: mysql:8.0.43
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: test_root_password
+      MYSQL_DATABASE: group_buy_market
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --sql-mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION
+    volumes:
+      - mysql_test_data:/var/lib/mysql
+      - ${DRAWIO_AGENT_PROJECT_DIR:-../../javaProject/DrawIOAgent}/docs/dev-ops/mysql/sql/credit.sql:/docker-entrypoint-initdb.d/10-credit.sql:ro
+      - ${DRAWIO_AGENT_PROJECT_DIR:-../../javaProject/DrawIOAgent}/docs/dev-ops/mysql/sql/user_account.sql:/docker-entrypoint-initdb.d/20-user-account.sql:ro
+      - ${DRAWIO_AGENT_PROJECT_DIR:-../../javaProject/DrawIOAgent}/docs/dev-ops/mysql/sql/group_buy_market.sql:/docker-entrypoint-initdb.d/30-group-buy-market.sql:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h localhost -ptest_root_password --silent
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks:
+      - test-network
+
+  redis:
+    image: redis:7.4-alpine
+    command:
+      - redis-server
+      - --appendonly
+      - "no"
+      - --requirepass
+      - test_redis_password
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - -a
+        - test_redis_password
+        - ping
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - test-network
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    environment:
+      RABBITMQ_DEFAULT_USER: test
+      RABBITMQ_DEFAULT_PASS: test_rabbit_password
+    ports:
+      - "15673:15672"
+    healthcheck:
+      test:
+        - CMD
+        - rabbitmq-diagnostics
+        - -q
+        - ping
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 20s
+    networks:
+      - test-network
+
+  drawio-agent:
+    build:
+      context: ${DRAWIO_AGENT_PROJECT_DIR:-../../javaProject/DrawIOAgent}/ai-agent-scaffold-app
+      dockerfile: Dockerfile
+    image: drawio-agent:test
+    environment:
+      TZ: Asia/Shanghai
+      SERVER_PORT: 8091
+      SPRING_PROFILES_ACTIVE: dev
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:?DASHSCOPE_API_KEY is required}
+      BAIDU_MCP_KEY: disabled-in-test
+      AI_AGENT_MCP_ENABLED: "false"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: test_root_password
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/draw_io_agent?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: test
+      SPRING_RABBITMQ_PASSWORD: test_rabbit_password
+      JAVA_OPTS: -Xms256m -Xmx768m
+    ports:
+      - "18091:8091"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - test-network
+
+  group-buy-market:
+    build:
+      context: ${GROUP_BUY_MARKET_PROJECT_DIR:-../../javaProject/group-buy-market}/group-buy-market-app
+      dockerfile: Dockerfile
+    image: group-buy-market:test
+    environment:
+      TZ: Asia/Shanghai
+      SERVER_PORT: 8092
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: test_root_password
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/group_buy_market?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: test
+      SPRING_RABBITMQ_PASSWORD: test_rabbit_password
+      REDIS_SDK_CONFIG_HOST: redis
+      REDIS_SDK_CONFIG_PORT: 6379
+      REDIS_SDK_CONFIG_PASSWORD: test_redis_password
+      JAVA_OPTS: -Xms256m -Xmx768m
+    ports:
+      - "18092:8092"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
+
+volumes:
+  mysql_test_data:

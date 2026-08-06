@@ -27,7 +27,7 @@ class TestCreditPurchaseFlow:
     def test_group_buy_success_grants_credits(
             self,
             api_client,
-            base_url,
+            drawio_callback_base_url,
             group_buy_api_client
     ):
         users = [
@@ -39,7 +39,7 @@ class TestCreditPurchaseFlow:
             for _ in range(3)
         ]
         notify_url = (
-            f"{base_url}"
+            f"{drawio_callback_base_url}"
             "/api/v1/credit/grant_group_buy_success"
         )
 

@@ -2,6 +2,11 @@ name: API Regression on Self-hosted Runner
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - docs/**
 
 permissions:
   contents: write
@@ -22,7 +27,11 @@ jobs:
       - Windows
       - X64
       - drawio-api
-    timeout-minutes: 20
+    timeout-minutes: 40
+    env:
+      DRAWIO_AGENT_PROJECT_DIR: E:/javaProject/DrawIOAgent
+      GROUP_BUY_MARKET_PROJECT_DIR: E:/javaProject/group-buy-market
+      DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -35,19 +44,99 @@ jobs:
             "allure-results", "docs" `
             -ErrorAction SilentlyContinue
 
-      - name: Check local services
+      - name: Validate local build environment
         shell: powershell
         run: |
-          $ports = 8091, 8092
-          foreach ($port in $ports) {
-            $available = Test-NetConnection `
-              -ComputerName "127.0.0.1" `
-              -Port $port `
-              -InformationLevel Quiet
+          if ([string]::IsNullOrWhiteSpace($env:DASHSCOPE_API_KEY)) {
+            throw "GitHub Secret DASHSCOPE_API_KEY is not configured."
+          }
 
-            if (-not $available) {
-              throw "Local service port $port is unavailable."
+          $requiredPaths = @(
+            "$env:DRAWIO_AGENT_PROJECT_DIR/pom.xml",
+            "$env:GROUP_BUY_MARKET_PROJECT_DIR/pom.xml"
+          )
+          foreach ($path in $requiredPaths) {
+            if (-not (Test-Path -LiteralPath $path)) {
+              throw "Required project file not found: $path"
             }
+          }
+
+          docker version
+          docker compose version
+          mvn --version
+
+      - name: Build Java applications
+        shell: powershell
+        run: |
+          mvn -f "$env:DRAWIO_AGENT_PROJECT_DIR/pom.xml" `
+            clean package -DskipTests
+          if ($LASTEXITCODE -ne 0) {
+            throw "DrawIOAgent Maven build failed."
+          }
+
+          mvn -f "$env:GROUP_BUY_MARKET_PROJECT_DIR/pom.xml" `
+            clean package -DskipTests
+          if ($LASTEXITCODE -ne 0) {
+            throw "group-buy-market Maven build failed."
+          }
+
+      - name: Start isolated Docker test environment
+        shell: powershell
+        run: |
+          docker compose -f docker-compose.test.yml `
+            down -v --remove-orphans
+          docker compose -f docker-compose.test.yml `
+            up -d --build
+
+      - name: Wait for business APIs
+        shell: powershell
+        run: |
+          function Wait-Api {
+            param(
+              [string]$Name,
+              [scriptblock]$Probe,
+              [int]$Attempts = 60
+            )
+
+            for ($attempt = 1; $attempt -le $Attempts; $attempt++) {
+              try {
+                & $Probe
+                Write-Host "$Name is ready."
+                return
+              }
+              catch {
+                if ($attempt -eq $Attempts) {
+                  docker compose -f docker-compose.test.yml ps -a
+                  throw "$Name did not become ready."
+                }
+                Start-Sleep -Seconds 2
+              }
+            }
+          }
+
+          Wait-Api "DrawIOAgent" {
+            $response = Invoke-WebRequest `
+              -Uri "http://127.0.0.1:18091/api/v1/query_ai_agent_config_list" `
+              -TimeoutSec 3 `
+              -UseBasicParsing
+            if ($response.StatusCode -ne 200) { throw "Not ready" }
+          }
+
+          Wait-Api "group-buy-market" {
+            $body = @{
+              userId = "github-actions-health"
+              source = "s01"
+              channel = "c01"
+              goodsId = "9890002"
+            } | ConvertTo-Json
+            $response = Invoke-WebRequest `
+              -Uri "http://127.0.0.1:18092/api/v1/gbm/index/query_group_buy_market_config" `
+              -Method Post `
+              -ContentType "application/json" `
+              -Body $body `
+              -TimeoutSec 3 `
+              -UseBasicParsing
+            if ($response.StatusCode -ne 200) { throw "Not ready" }
           }
 
       - name: Run pytest and generate Allure report
@@ -64,8 +153,18 @@ jobs:
           }
 
           & .\scripts\run_allure.ps1 `
+            -BaseUrl "http://127.0.0.1:18091" `
+            -GroupBuyBaseUrl "http://127.0.0.1:18092" `
+            -DrawioCallbackBaseUrl "http://drawio-agent:8091" `
             -PythonExecutable $pythonExecutable `
             -AllureExecutable $allureExecutable
+
+      - name: Stop Docker test environment
+        if: always()
+        shell: powershell
+        run: |
+          docker compose -f docker-compose.test.yml `
+            down -v --remove-orphans
 
       - name: Upload Allure results
         if: always()
